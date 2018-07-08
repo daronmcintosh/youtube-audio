@@ -62,3 +62,6 @@ typings/
 
 # eslint config file
 .eslintrc.json
+
+# vs code directory
+.vscode
