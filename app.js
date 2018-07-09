@@ -14,7 +14,7 @@ app.get("/", function(req, res){
 	res.render("index");
 });
 
-// SOURCE URL FOR AUDIO
+// SOURCE URL FOR AUDIOn
 app.get("/api/play/:videoId", function(req, res){
 	// Secure this route to prevent unauthorized access and/or convert to a post route
 	// Find a better name for this route
@@ -48,6 +48,12 @@ app.get("/player/:source", function(req, res){
 	// This route should only play streams from this domain
 	var source = req.params.source;
 	res.render("player", {source: source});
+});
+
+// Redirection route to get to player from index page
+app.get("/redirection", function(req, res){
+	var videoId = ytdl.getVideoID(req.query.url);
+	res.redirect("/player/" + videoId);
 });
 
 app.get("*", function(req, res){

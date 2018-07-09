@@ -8,9 +8,13 @@
 </head>
 <body>
 	<h1>Welcome to Youtubify</h1>
-	<form action="/api/request/" method="GET">
+	<form action="/redirection/" method="GET">
 		<input type="text" name="url" required>
 		<input type="submit" value="Play Song">
+	</form>
+	<form action="/api/request" method="GET">
+		<input type="text" name="url" required>
+		<input type="submit" value="API Request">
 	</form>
 </body>
 </html>

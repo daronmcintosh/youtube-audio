@@ -3,10 +3,28 @@
 <head>
     <meta charset="utf-8" />
     <title>Player</title>
+    <link rel="stylesheet" href="/stylesheets/styles.css">
 </head>
 <body>
-    <audio controls autoplay>
-        <source src="/api/play/<%= source %>" type="audio/mp3">
-    </audio>
+
+    <div id="audioContainer">
+        <audio id="audio" controls preload="metadata">
+            <source src="/api/play/<%= source %>" type="audio/mp3">
+        </audio>
+    </div>
+    <div id="audio-controls" class="controls" data-state="hidden">
+        <button id="playpause" type="button" data-state="play">Play/Pause</button>
+        <button id="stop" type="button" data-state="stop">Stop</button>
+        <div class="progress">
+            <progress id="progress" value="0" min="0">
+                <span id="progress-bar"></span>
+            </progress>
+        </div>
+        <button id="mute" type="button" data-state="mute">Mute/Unmute</button>
+        <button id="volinc" type="button" data-state="volup">Vol+</button>
+        <button id="voldec" type="button" data-state="voldown">Vol-</button>
+    </div>
+
+    <script src="/js/player.js"></script>
 </body>
 </html>
