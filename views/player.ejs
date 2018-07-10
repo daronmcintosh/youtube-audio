@@ -1,30 +1,13 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8" />
-    <title>Player</title>
-    <link rel="stylesheet" href="/stylesheets/styles.css">
-</head>
-<body>
+<% include ./partials/header %>
 
     <div id="audioContainer">
-        <audio id="audio" controls preload="metadata">
+        <audio id="audio" crossorigin playsinline preload="metadata">
             <source src="/api/play/<%= source %>" type="audio/mp3">
         </audio>
     </div>
-    <div id="audio-controls" class="controls" data-state="hidden">
-        <button id="playpause" type="button" data-state="play">Play/Pause</button>
-        <button id="stop" type="button" data-state="stop">Stop</button>
-        <div class="progress">
-            <progress id="progress" value="0" min="0">
-                <span id="progress-bar"></span>
-            </progress>
-        </div>
-        <button id="mute" type="button" data-state="mute">Mute/Unmute</button>
-        <button id="volinc" type="button" data-state="volup">Vol+</button>
-        <button id="voldec" type="button" data-state="voldown">Vol-</button>
-    </div>
-
+    <!-- Plyr resources and browser polyfills are specified in the pen settings -->
+    <script src="https://cdn.plyr.io/3.3.21/plyr.polyfilled.js"></script>
+    <script>const player = new Plyr("audio", {duration: <%= length %>});</script>
     <script src="/js/player.js"></script>
-</body>
-</html>
+
+<% include ./partials/footer %>
