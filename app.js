@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const ytdl = require("ytdl-core");
 const bodyParser = require("body-parser");
@@ -10,7 +11,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
 app.use(express.static(__dirname + "/public")); // eslint-disable-line
 
-// ypi("AIzaSyA3dRQiPt2aHwZ3piY_nJ7tZH6XEEDYTMM", "PLBCF2DAC6FFB574DE").then(items => {
+// ypi(process.env.API_KEY, "PLBCF2DAC6FFB574DE").then(items => {
 // 	console.log(items);
 // }).catch(console.error);
 
