@@ -9,18 +9,10 @@
   "author": "Daron McIntosh",
   "license": "ISC",
   "dependencies": {
-    "body-parser": "^1.18.3",
     "dotenv": "^6.0.0",
     "ejs": "^2.6.1",
     "express": "^4.16.3",
-    "file-system": "^2.2.2",
-    "fluent-ffmpeg": "^2.1.2",
-    "howler": "^2.0.13",
-    "lame": "^1.2.4",
-    "readline": "^1.3.0",
-    "speaker": "^0.4.1",
     "youtube-audio-stream": "^0.2.0",
-    "youtube-playlist-info": "^1.1.2",
     "ytdl-core": "^0.20.4"
   },
   "devDependencies": {

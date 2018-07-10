@@ -1,19 +1,12 @@
 require("dotenv").config();
 const express = require("express");
 const ytdl = require("ytdl-core");
-const bodyParser = require("body-parser");
 const stream = require("youtube-audio-stream");
-const ypi = require("youtube-playlist-info");
 
 const app = express();
 
-app.use(bodyParser.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
 app.use(express.static(__dirname + "/public")); // eslint-disable-line
-
-// ypi(process.env.API_KEY, "PLBCF2DAC6FFB574DE").then(items => {
-// 	console.log(items);
-// }).catch(console.error);
 
 // INDEX PAGE
 app.get("/", function (req, res) {
