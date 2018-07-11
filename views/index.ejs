@@ -17,7 +17,15 @@
 				</div>
 				<button type="submit" class="btn btn-primary">Play Song</button>
 			</form>
+			<hr>
+			<form action="/redirection/" method="GET" class="form-inline">
+				<div class="form-group mx-sm-3 mb-2">
+					<label class="mx-sm-2" for="playlistId">Playlist Id</label>
+					<input class="form-control" id="playlistId" name="playlistId">
+				</div>
+				<button type="submit" class="btn btn-primary">List Items</button>
+			</form>
 		</div>
 	</div>
 
-	<% include ./partials/footer %>
+<% include ./partials/footer %>

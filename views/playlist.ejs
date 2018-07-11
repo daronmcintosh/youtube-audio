@@ -1,0 +1,10 @@
+<% include ./partials/header %>
+
+    <h1>Playlist Page</h1>
+    <ul>
+        <% playlistItems.forEach(function(item){ %>
+            <li><%= item.track %> <%= item.name %> <a href="<%= item.src %>">Play</a></li>
+        <% }) %>
+    </ul>
+
+<% include ./partials/footer %>

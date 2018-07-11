@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const ytdl = require("ytdl-core");
 const stream = require("youtube-audio-stream");
+const tracks = require("./public/js/tracks");
 
 const app = express();
 
@@ -60,10 +61,24 @@ app.get("/player/:source", function (req, res) {
 	});
 });
 
-// Redirection route to get to player from index page
+// Redirection route to get to player or playlist player from index page, this was done to make the url cleaner
 app.get("/redirection", function (req, res) {
-	var videoId = ytdl.getVideoID(req.query.playURL);
-	res.redirect("/player/" + videoId);
+	if(req.query.playURL){
+		var videoId = ytdl.getVideoID(req.query.playURL);
+		res.redirect("/player/" + videoId);
+	} else if(req.query.playlistId){
+		var playlistId = "PLM2V-zC1RStdDt-ATpEzd7bNLwJ1pojeJ";
+		res.redirect("/playlist/" + playlistId);
+	}
+});
+
+// Playlist Route
+app.get("/playlist/:playlistId", function(req, res){
+	// PLM2V-zC1RStdDt-ATpEzd7bNLwJ1pojeJ
+	tracks.build(req.params.playlistId).then(function (playlistItems) {
+		// console.log(result);
+		res.render("playlist", {playlistItems: playlistItems});
+	});
 });
 
 app.get("*", function (req, res) {

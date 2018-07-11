@@ -12,6 +12,7 @@
     "dotenv": "^6.0.0",
     "ejs": "^2.6.1",
     "express": "^4.16.3",
+    "googleapis": "^32.0.0",
     "youtube-audio-stream": "^0.2.0",
     "ytdl-core": "^0.20.4"
   },
