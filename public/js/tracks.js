@@ -22,9 +22,12 @@ async function buildPlaylist(playlistId) {
 		var trackObj = {};
 		trackObj.track = trackCounter;
 		trackObj.name = item.snippet.title;
-		trackObj.duration = await ytdl.getInfo(item.snippet.resourceId.videoId).then(function (result) {
-			return result.length_seconds;
-		});
+		// trackObj.duration = await ytdl.getInfo(item.snippet.resourceId.videoId).then(function (result) {
+		// 	return result.length_seconds;
+		// });
+		// trackObj.duration = await fetchVideoInfo(item.snippet.resourceId.videoId).then(function (result) {
+		// 	return result.duration;
+		// });
 		trackObj.src = "http://localhost:3000/api/play/" + item.snippet.resourceId.videoId;
 		trackCounter++;
 		tracks.push(trackObj);

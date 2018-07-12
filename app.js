@@ -62,22 +62,40 @@ app.get("/player/:source", function (req, res) {
 });
 
 // Redirection route to get to player or playlist player from index page, this was done to make the url cleaner
-app.get("/redirection", function (req, res) {
+app.get("/redirection/", function (req, res) {
 	if(req.query.playURL){
 		var videoId = ytdl.getVideoID(req.query.playURL);
 		res.redirect("/player/" + videoId);
-	} else if(req.query.playlistId){
-		var playlistId = "PLM2V-zC1RStdDt-ATpEzd7bNLwJ1pojeJ";
-		res.redirect("/playlist/" + playlistId);
 	}
+	//  else if(req.query.playlistId){
+	// 	var playlistId = req.query.playlistId;
+	// 	console.log("redirection" + playlistId);
+	// 	res.redirect("/playlist/" + playlistId);
+	// }
 });
 
 // Playlist Route
-app.get("/playlist/:playlistId", function(req, res){
+// app.get("/playlist/:playlistId", function(req, res){
+// 	// PLM2V-zC1RStdDt-ATpEzd7bNLwJ1pojeJ
+// 	console.log("playlist " + req.params.playlistId);
+// 	tracks.build(req.params.playlistId).then(function (playlistItems) {
+// 		// console.log(result);
+// 		res.render("playlist", {playlistItems: playlistItems});
+// 	}).catch(function(err){
+// 		console.log("err");
+// 		// res.send("There was an error");
+// 	});
+// });
+app.get("/playlist/", function(req, res){
 	// PLM2V-zC1RStdDt-ATpEzd7bNLwJ1pojeJ
-	tracks.build(req.params.playlistId).then(function (playlistItems) {
+	console.log("playlist " + req.query.playlistId);
+	tracks.build(req.query.playlistId).then(function (playlistItems) {
 		// console.log(result);
 		res.render("playlist", {playlistItems: playlistItems});
+	}).catch(function(err){
+		if(err){
+			console.log("err");
+		}
 	});
 });
 

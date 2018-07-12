@@ -1,10 +1,42 @@
 <% include ./partials/header %>
 
-    <h1>Playlist Page</h1>
-    <ul>
-        <% playlistItems.forEach(function(item){ %>
-            <li><%= item.track %> <%= item.name %> <a href="<%= item.src %>">Play</a></li>
-        <% }) %>
-    </ul>
+	<div class="container">
+        <div class="column add-bottom">
+            <div id="mainwrap">
+                <div id="nowPlay">
+                    <span id="npAction">Paused...</span>
+                    <span id="npTitle"></span>
+                </div>
+                <div id="audiowrap">
+                    <div id="audio0">
+                        <audio id="audio1" class="js-player" controls>Your browser does not support HTML5 Audio!</audio>
+                    </div>
+                    <div id="tracks">
+                        <a id="btnPrev">&larr;</a>
+                        <a id="btnNext">&rarr;</a>
+                    </div>
+                </div>
+                <div id="plwrap">
+                    <ul id="plList">
+						<% playlistItems.forEach(function(item){ %>
+							<% var trackNumber = item.track %>
+							<% if (item.track.toString().length === 1) { %>
+								<% trackNumber = "0" + trackNumber %>
+							<% } %>
+							<li data-src="<%= item.src %>"><div class="plItem"><span class="plNum"><%= trackNumber %>.</span><span class="plTitle"><%= item.name %></span><span class="plLength">404</span></div></li>
+							<!-- <li class="<%= item.src %>"><div class="plItem"><span class="plNum"><%= trackNumber %>.</span><span class="plTitle"><%= item.name %></span><span class="plLength"><%= item.duration %></span></div></li> -->
+						<% }) %>
+					</ul>
+					<!-- <ul id="testing">
+						<% playlistItems.forEach(function(item){ %>
+							<audio class="js-player" src="<%= item.src %>" data-plyr-config='{ "duration": "720" }'></audio>
+						<% }) %>
+					</ul> -->
+                </div>
+            </div>
+        </div>
+	</div>
+	<script src="https://cdn.plyr.io/3.3.21/plyr.polyfilled.js"></script>
+	<script>const players = Array.from(document.querySelectorAll('.js-player')).map(p => new Plyr(p));</script>
 
 <% include ./partials/footer %>
