@@ -1,87 +1,89 @@
 var supportsAudio = !!document.createElement("audio").canPlayType;
 if (supportsAudio) {
-	var index = 0;
-	var playing = false;
-	var trackCount = document.getElementsByClassName("plItem").length;
-	var npAction = document.getElementById("npAction");
-	var npTitle = document.getElementById("npTitle");
-	var audio = document.getElementById("audio1");
+	var audioTags = document.getElementsByTagName("audio");
+	var liTags = document.querySelectorAll("#plList li");
 	var btnPrev = document.getElementById("btnPrev");
 	var btnNext = document.getElementById("btnNext");
+	var index = 0;
+	var playing = false;
+	var trackCount = audioTags.length;
+	var npAction = document.getElementById("npAction");
+	var npTitle = document.getElementById("npTitle");
 	var playListItems = document.querySelectorAll("#plList li");
 
-	audio.addEventListener("play", function () {
-		playing = true;
-		npAction.textContent = "Now Playing...";
-	});
-	audio.addEventListener("pause", function () {
-		playing = false;
-		npAction.textContent = "Paused...";
-	});
-	audio.addEventListener("ended", function () {
-		npAction.textContent = "Paused...";
-		if ((index + 1) < trackCount) {
-			index++;
+	const players = Plyr.setup(".js-player");
+	hidePlyrs(index);
+
+	for (let i = 0; i < trackCount; i++) {
+		audioTags[i].addEventListener("play", function () {
+			playing = true;
+			npAction.textContent = "Now Playing...";
+		});
+		audioTags[i].addEventListener("pause", function () {
+			playing = false;
+			npAction.textContent = "Paused...";
+		});
+		audioTags[i].addEventListener("ended", function () {
+			npAction.textContent = "Paused...";
+			if ((index + 1) < trackCount) {
+				index++;
+				loadTrack(index);
+				hidePlyrs(index);
+				players[index].play();
+			} else {
+				players[index].pause();
+				index = 0;
+				loadTrack(index);
+				hidePlyrs(index);
+			}
+		});
+	}
+	for(let i = 0; i < liTags.length; i++){
+		liTags[i].addEventListener("click", function(){
+			// stop song, set index, load track, hide plyrs then play track
+			players[index].stop();
+			index = Number(this.getAttribute("data-index"));
 			loadTrack(index);
-			audio.play();
-		} else {
-			audio.pause();
-			index = 0;
-			loadTrack(index);
-		}
-	});
+			hidePlyrs(index);
+			playTrack(index, players);
+		});
+	}
 	btnPrev.addEventListener("click", function () {
 		if ((index - 1) > -1) {
+			players[index].stop();
 			index--;
 			loadTrack(index);
+			hidePlyrs(index);
 			if (playing) {
-				audio.play();
+				players[index].play();
 			}
 		} else {
-			audio.pause();
+			players[index].pause();
 			index = 0;
 			loadTrack(index);
+			hidePlyrs(index);
 		}
 	});
 	btnNext.addEventListener("click", function () {
 		if ((index + 1) < trackCount) {
+			players[index].stop();
 			index++;
 			loadTrack(index);
+			hidePlyrs(index);
 			if (playing) {
-				audio.play();
+				players[index].play();
 			}
 		} else {
-			audio.pause();
+			players[index].pause();
 			index = 0;
 			loadTrack(index);
+			hidePlyrs(index);
 		}
 	});
 
-	document.getElementsByTagName("ul")[0].onclick = function (e) {
-		var el = e.target;
-		while (el != document.body && el.tagName.toLowerCase() != "li") {
-			el = el.parentNode;
-		}
-		var id = [].indexOf.call(el.parentNode.children, el);
-		if (id !== index) {
-			playTrack(id);
-		}
-	};
-
+	// select first track and play
 	loadTrack(0);
-
-	// initialize plyr
-	var player = new Plyr("#audio1", {
-		controls: [
-			"restart",
-			"play",
-			"progress",
-			"current-time",
-			"duration",
-			"mute",
-			"volume"
-		]
-	});
+	playTrack(0, players);
 }
 
 function loadTrack(id) {
@@ -90,14 +92,26 @@ function loadTrack(id) {
 			playListItems[id].classList.add("plSel");
 			npTitle.textContent = playListItems[id].getElementsByClassName("plTitle")[0].textContent;
 			index = id;
-			audio.src = playListItems[i].getAttribute("data-src");
+			// audio.src = playListItems[i].getAttribute("data-src");
 		} else {
 			playListItems[i].classList.remove("plSel");
 		}
 	}
 }
 
-function playTrack(id) {
+function playTrack(id, players) {
 	loadTrack(id);
-	audio.play();
+	players[index].play();
+}
+
+// hide every player except the one passed
+function hidePlyrs(id) {
+	var players = document.getElementsByClassName("plyr");
+	for (var i = 0; i < audioTags.length; i++) {
+		if (i === id) {
+			players[i].style.display = "block";
+		} else {
+			players[i].style.display = "none";
+		}
+	}
 }

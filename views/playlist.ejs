@@ -9,7 +9,9 @@
                 </div>
                 <div id="audiowrap">
                     <div id="audio0">
-                        <audio id="audio1" class="js-player" controls>Your browser does not support HTML5 Audio!</audio>
+                        <% playlistItems.forEach(function(item){ %>
+                            <audio class="js-player" preload="none" src="<%= item.src %>" data-plyr-config='{ "duration": "<%= item.duration %>" }'></audio>
+                        <% }) %>
                     </div>
                     <div id="tracks">
                         <a id="btnPrev">&larr;</a>
@@ -18,25 +20,18 @@
                 </div>
                 <div id="plwrap">
                     <ul id="plList">
-						<% playlistItems.forEach(function(item){ %>
+						<% playlistItems.forEach(function(item, i){ %>
 							<% var trackNumber = item.track %>
 							<% if (item.track.toString().length === 1) { %>
 								<% trackNumber = "0" + trackNumber %>
-							<% } %>
-							<li data-src="<%= item.src %>"><div class="plItem"><span class="plNum"><%= trackNumber %>.</span><span class="plTitle"><%= item.name %></span><span class="plLength">404</span></div></li>
-							<!-- <li class="<%= item.src %>"><div class="plItem"><span class="plNum"><%= trackNumber %>.</span><span class="plTitle"><%= item.name %></span><span class="plLength"><%= item.duration %></span></div></li> -->
+                            <% } %>
+                            <% var lengthInMinutes = moment.utc(item.duration*1000).format("mm:ss"); %>
+							<li data-src="<%= item.src %>" data-index="<%= i %>"><div class="plItem"><span class="plNum"><%= trackNumber %>.</span><span class="plTitle"><%= item.name %></span><span class="plLength"><%= lengthInMinutes %></span></div></li>
 						<% }) %>
 					</ul>
-					<!-- <ul id="testing">
-						<% playlistItems.forEach(function(item){ %>
-							<audio class="js-player" src="<%= item.src %>" data-plyr-config='{ "duration": "720" }'></audio>
-						<% }) %>
-					</ul> -->
                 </div>
             </div>
         </div>
 	</div>
-	<script src="https://cdn.plyr.io/3.3.21/plyr.polyfilled.js"></script>
-	<script>const players = Array.from(document.querySelectorAll('.js-player')).map(p => new Plyr(p));</script>
 
 <% include ./partials/footer %>
