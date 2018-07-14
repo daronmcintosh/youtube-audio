@@ -1,8 +1,7 @@
 require("dotenv").config();
 const express = require("express");
-const ytdl = require("ytdl-core");
 const stream = require("youtube-audio-stream");
-const tracks = require("./public/js/tracks");
+const apiRequest = require("./public/js/apiRequest");
 const moment = require("moment");
 
 const app = express();
@@ -20,7 +19,7 @@ app.get("/", function (req, res) {
 app.get("/api/play/:videoId", function (req, res) {
 	// Secure this route to prevent unauthorized access and/or convert to a post route
 	// Find a better name for this route
-	var requestUrl = "http://youtube.com/watch?v=" + req.params.videoId;
+	let requestUrl = "http://youtube.com/watch?v=" + req.params.videoId;
 	try {
 		stream(requestUrl).pipe(res);
 	} catch (exception) {
@@ -32,52 +31,39 @@ app.get("/api/play/:videoId", function (req, res) {
 app.get("/api/request/", function (req, res) {
 	// SEND JSON DATA TO THIS ROUTE
 	// Verify that the url is valid and contains a valid id to prevent errors
-	var videoId = ytdl.getVideoID(req.query.apiURL);
-	ytdl.getInfo(req.query.apiURL, function (err, info) {
-		if (err) {
-			res.redirect("back");
-		}
-		var length = info.length_seconds;
-		var title = info.title;
-		var jsonResponse = {
-			videoId: videoId,
-			title: title,
-			length: length + " seconds",
-			data: {
-				url: "http://localhost:3000/api/play/" + videoId
-			}
-		};
+	let videoId = videoIdParser(req.query.apiURL);
+	apiRequest.buildVideo(videoId).then(function(result){
+		result.duration = moment.utc(result.duration*1000).format("mm:ss");
 		res.type("json");
-		res.write(JSON.stringify(jsonResponse));
+		res.write(JSON.stringify(result));
 		res.end();
 	});
 });
 
 // Plyr player
-app.get("/player/:source", function (req, res) {
+app.get("/player/:videoId", function (req, res) {
 	// This route should only play streams from this domain
-	ytdl.getInfo(req.params.source, function (err, info) {
-		var source = req.params.source;
-		var length = info.length_seconds;
-		res.render("player", { source: source, length: length });
+	apiRequest.buildVideo(req.params.videoId).then(function(result){
+		let src = req.params.videoId;
+		let duration = result.duration;
+		res.render("player", { src: src, duration: duration });
 	});
 });
 
 // Redirection route to get to player or playlist player from index page, this was done to make the url cleaner
 app.get("/redirection/", function (req, res) {
 	if (req.query.playURL) {
-		var videoId = ytdl.getVideoID(req.query.playURL);
+		let videoId = videoIdParser(req.query.playURL);
 		res.redirect("/player/" + videoId);
 	} else if (req.query.playlistId) {
-		var playlistId = req.query.playlistId;
+		let playlistId = req.query.playlistId;
 		res.redirect("/playlist/" + playlistId);
 	}
 });
 
+// Playlist route
 app.get("/playlist/:playlistId", function (req, res) {
-	// console.log("playlist " + req.params.playlistId);
-	tracks.build(req.params.playlistId).then(function (playlistItems) {
-		// console.log(result);
+	apiRequest.buildPlaylist(req.params.playlistId).then(function (playlistItems) {
 		res.render("playlist", { playlistItems: playlistItems });
 	}).catch(function (err) {
 		if (err) {
@@ -86,6 +72,7 @@ app.get("/playlist/:playlistId", function (req, res) {
 	});
 });
 
+// Route for pages that don't exist
 app.get("*", function (req, res) {
 	res.render("404");
 });
@@ -94,3 +81,9 @@ app.get("*", function (req, res) {
 app.listen(3000, function () {
 	console.log("Server has started on port 3000");
 });
+
+function videoIdParser(url) {
+	let regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/; // eslint-disable-line
+	let match = url.match(regExp);
+	return (match && match[7].length == 11) ? match[7] : false;
+}

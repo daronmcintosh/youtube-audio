@@ -25,8 +25,8 @@
 							<% if (item.track.toString().length === 1) { %>
 								<% trackNumber = "0" + trackNumber %>
                             <% } %>
-                            <% var lengthInMinutes = moment.utc(item.duration*1000).format("mm:ss"); %>
-							<li data-src="<%= item.src %>" data-index="<%= i %>"><div class="plItem"><span class="plNum"><%= trackNumber %>.</span><span class="plTitle"><%= item.name %></span><span class="plLength"><%= lengthInMinutes %></span></div></li>
+                            <% var durationInMinutes = moment.utc(item.duration*1000).format("mm:ss"); %>
+							<li data-src="<%= item.src %>" data-index="<%= i %>"><div class="plItem"><span class="plNum"><%= trackNumber %>.</span><span class="plTitle"><%= item.name %></span><span class="plLength"><%= durationInMinutes %></span></div></li>
 						<% }) %>
 					</ul>
                 </div>

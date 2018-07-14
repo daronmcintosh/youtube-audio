@@ -14,8 +14,7 @@
     "express": "^4.16.3",
     "googleapis": "^32.0.0",
     "moment": "^2.22.2",
-    "youtube-audio-stream": "^0.2.0",
-    "ytdl-core": "^0.20.4"
+    "youtube-audio-stream": "^0.2.0"
   },
   "devDependencies": {
     "eslint": "^5.0.1",

@@ -23,16 +23,8 @@ async function buildPlaylist(playlistId) {
 		var videoId = item.snippet.resourceId.videoId;
 		trackObj.track = trackCounter;
 		trackObj.name = item.snippet.title;
-		trackObj.duration = await youtube.videos.list({
-			id: videoId,
-			part: "contentDetails"
-		}).then(function (result) {
-			return moment.duration(result.data.items[0].contentDetails.duration).asSeconds();
-		}).catch(function(err){
-			if(err){
-				// do nothing
-			}
-		});
+		let videoObj = await buildVideo(videoId);
+		trackObj.duration = await videoObj.duration;
 		trackObj.src = "http://localhost:3000/api/play/" + videoId;
 		trackCounter++;
 		tracks.push(trackObj);
@@ -40,4 +32,18 @@ async function buildPlaylist(playlistId) {
 	return tracks;
 }
 
-module.exports.build = buildPlaylist;
+async function buildVideo(videoId){
+	let videoObj = {};
+	await youtube.videos.list({
+		id: videoId,
+		part: "contentDetails, snippet"
+	}).then(function(result){
+		videoObj.title = result.data.items[0].snippet.title;
+		videoObj.duration = moment.duration(result.data.items[0].contentDetails.duration).asSeconds();
+		videoObj.src = "http://localhost:3000/api/play/" + videoId;
+	});
+	return videoObj;
+}
+
+module.exports.buildPlaylist = buildPlaylist;
+module.exports.buildVideo = buildVideo;

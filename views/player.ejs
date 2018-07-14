@@ -2,12 +2,12 @@
 
     <div id="audioContainer">
         <audio id="audio" crossorigin playsinline preload="metadata">
-            <source src="/api/play/<%= source %>" type="audio/mp3">
+            <source src="/api/play/<%= src %>" type="audio/mp3">
         </audio>
     </div>
     <!-- Plyr resources and browser polyfills are specified in the pen settings -->
     <script src="https://cdn.plyr.io/3.3.21/plyr.polyfilled.js"></script>
-    <script>const player = new Plyr("audio", {duration: <%= length %>});</script>
+    <script>const player = new Plyr("audio", {duration: <%= duration %>});</script>
     <script src="/js/player.js"></script>
 
 <% include ./partials/footer %>
