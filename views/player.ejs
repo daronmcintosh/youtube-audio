@@ -1,13 +1,32 @@
-<% include ./partials/header %>
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css">
+    <!-- Plyr CSS -->
+    <link rel="stylesheet" href="https://cdn.plyr.io/3.3.21/plyr.css">
+    <title>Youtubify</title>
+</head>
+
+<body>
 
     <div id="audioContainer">
-        <audio id="audio" crossorigin playsinline preload="metadata">
-            <source src="/api/play/<%= src %>" type="audio/mp3">
-        </audio>
+        <audio class="js-player" preload="none" src="<%= src %>" data-plyr-config='{ "duration": "<%= duration %>" }'></audio>
     </div>
-    <!-- Plyr resources and browser polyfills are specified in the pen settings -->
-    <script src="https://cdn.plyr.io/3.3.21/plyr.polyfilled.js"></script>
-    <script>const player = new Plyr("audio", {duration: <%= duration %>});</script>
-    <script src="/js/player.js"></script>
 
-<% include ./partials/footer %>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/plyr/3.3.21/plyr.min.js"></script>
+
+    <script src="/js/player.js"></script>
+</body>
+
+</html>

@@ -29,11 +29,9 @@ app.get("/api/play/:videoId", function (req, res) {
 
 // API RESPONSE ROUTE
 app.get("/api/request/", function (req, res) {
-	// SEND JSON DATA TO THIS ROUTE
-	// Verify that the url is valid and contains a valid id to prevent errors
 	let videoId = videoIdParser(req.query.apiURL);
-	apiRequest.buildVideo(videoId).then(function(result){
-		result.duration = moment.utc(result.duration*1000).format("mm:ss");
+	apiRequest.buildVideo(videoId).then(function (result) {
+		result.duration = moment.utc(result.duration * 1000).format("mm:ss");
 		res.type("json");
 		res.write(JSON.stringify(result));
 		res.end();
@@ -43,8 +41,8 @@ app.get("/api/request/", function (req, res) {
 // Plyr player
 app.get("/player/:videoId", function (req, res) {
 	// This route should only play streams from this domain
-	apiRequest.buildVideo(req.params.videoId).then(function(result){
-		let src = req.params.videoId;
+	apiRequest.buildVideo(req.params.videoId).then(function (result) {
+		let src = result.src;
 		let duration = result.duration;
 		res.render("player", { src: src, duration: duration });
 	});
@@ -52,11 +50,12 @@ app.get("/player/:videoId", function (req, res) {
 
 // Redirection route to get to player or playlist player from index page, this was done to make the url cleaner
 app.get("/redirection/", function (req, res) {
-	if (req.query.playURL) {
-		let videoId = videoIdParser(req.query.playURL);
+	if (req.query.videoQuery) {
+		let videoId = videoIdParser(req.query.videoQuery);
 		res.redirect("/player/" + videoId);
-	} else if (req.query.playlistId) {
-		let playlistId = req.query.playlistId;
+	} else if (req.query.playlistQuery) {
+		// let playlistId = req.query.playlistId;
+		let playlistId = playlistIdParser(req.query.playlistQuery);
 		res.redirect("/playlist/" + playlistId);
 	}
 });
@@ -82,8 +81,23 @@ app.listen(3000, function () {
 	console.log("Server has started on port 3000");
 });
 
-function videoIdParser(url) {
+function videoIdParser(query) {
 	let regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/; // eslint-disable-line
-	let match = url.match(regExp);
-	return (match && match[7].length == 11) ? match[7] : false;
+	let match = query.match(regExp);
+	if(match && match[7].length == 11) {
+		return match[7];
+	}
+	// in this case an id was entered, this is really lazy, find a way to validate it
+	return query;
+}
+
+function playlistIdParser(query) {
+	let reg = new RegExp("[&?]list=([a-z0-9_]+)", "i");
+	let match = query.match(reg);
+	// it found the id
+	if(match && match.length === 2){
+		return (match[1]);
+	}
+	// in this case an id was entered, this is really lazy, find a way to validate it
+	return query;
 }
