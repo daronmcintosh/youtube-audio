@@ -29,13 +29,31 @@ app.get("/api/play/:videoId", function (req, res) {
 
 // API RESPONSE ROUTE
 app.get("/api/request/", function (req, res) {
-	let videoId = videoIdParser(req.query.apiURL);
-	apiRequest.buildVideo(videoId).then(function (result) {
-		result.duration = moment.utc(result.duration * 1000).format("mm:ss");
-		res.type("json");
-		res.write(JSON.stringify(result));
-		res.end();
-	});
+	let query = req.query.apiQuery;
+	let videoId = videoIdParser(query);
+	let playlistId = playlistIdParser(query);
+	if (videoId.length == 11) {
+		apiRequest.buildVideo(videoId).then(function (result) {
+			// result.duration = moment.utc(result.duration * 1000).format("mm:ss");
+			res.type("json");
+			res.write(JSON.stringify(result));
+			res.end();
+		}).catch(function(err){
+			if(err){
+				invalidId(res);
+			}
+		});
+	} else {
+		apiRequest.buildPlaylist(playlistId).then(function (result) {
+			res.type("json");
+			res.write(JSON.stringify(result));
+			res.end();
+		}).catch(function(err){
+			if(err){
+				invalidId(res);
+			}
+		});
+	}
 });
 
 // Plyr player
@@ -44,7 +62,23 @@ app.get("/player/:videoId", function (req, res) {
 	apiRequest.buildVideo(req.params.videoId).then(function (result) {
 		let src = result.src;
 		let duration = result.duration;
-		res.render("player", { src: src, duration: duration });
+		let title = result.title;
+		res.render("player", { src: src, duration: duration, title: title });
+	}).catch(function(err){
+		if(err){
+			invalidId(res);
+		}
+	});
+});
+
+// Playlist route
+app.get("/playlist/:playlistId", function (req, res) {
+	apiRequest.buildPlaylist(req.params.playlistId).then(function (playlistItems) {
+		res.render("playlist", { playlistItems: playlistItems });
+	}).catch(function(err){
+		if(err){
+			invalidId(res);
+		}
 	});
 });
 
@@ -54,21 +88,9 @@ app.get("/redirection/", function (req, res) {
 		let videoId = videoIdParser(req.query.videoQuery);
 		res.redirect("/player/" + videoId);
 	} else if (req.query.playlistQuery) {
-		// let playlistId = req.query.playlistId;
 		let playlistId = playlistIdParser(req.query.playlistQuery);
 		res.redirect("/playlist/" + playlistId);
 	}
-});
-
-// Playlist route
-app.get("/playlist/:playlistId", function (req, res) {
-	apiRequest.buildPlaylist(req.params.playlistId).then(function (playlistItems) {
-		res.render("playlist", { playlistItems: playlistItems });
-	}).catch(function (err) {
-		if (err) {
-			console.log(err);
-		}
-	});
 });
 
 // Route for pages that don't exist
@@ -84,7 +106,7 @@ app.listen(3000, function () {
 function videoIdParser(query) {
 	let regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/; // eslint-disable-line
 	let match = query.match(regExp);
-	if(match && match[7].length == 11) {
+	if (match && match[7].length == 11) {
 		return match[7];
 	}
 	// in this case an id was entered, this is really lazy, find a way to validate it
@@ -95,9 +117,14 @@ function playlistIdParser(query) {
 	let reg = new RegExp("[&?]list=([a-z0-9_]+)", "i");
 	let match = query.match(reg);
 	// it found the id
-	if(match && match.length === 2){
+	if (match && match.length === 2) {
 		return (match[1]);
 	}
 	// in this case an id was entered, this is really lazy, find a way to validate it
 	return query;
+}
+
+// If the youtube api returns an error, it redirects user to this page
+function invalidId(res){
+	res.render("invalid");
 }

@@ -1,25 +1,29 @@
 <% include ./partials/header %>
-
+	<div class="jumbotron">
+		<h1 class="display-4">Hello, Welcome to Youtubify</h1>
+		<p class="lead">Play a single song, a playlist or make an api request</p>
+		<hr class="my-4">
+    </div>
 	<div class="row justify-content-center">
 		<div class="col-lg-8">
-			<form action="/api/request" method="GET" class="form-inline">
-				<div class="form-group mx-sm-3 mb-2">
-					<label class="mx-sm-2" for="apiURL">Make API Request</label>
-					<input class="form-control" type="text" name="apiURL" id="apiURL" required>
+			<form action="/api/request" method="GET">
+				<div class="form-group">
+					<label for="apiQuery">Make API Request</label>
+					<input class="form-control" type="text" name="apiQuery" id="apiQuery" required>
 				</div>
 				<button type="submit" class="btn btn-primary">Request</button>
 			</form>
 			<hr>
-			<form action="/redirection" method="GET" class="form-inline">
-				<div class="form-group mx-sm-3 mb-2">
-					<label class="mx-sm-2" for="videoQuery">Youtube Video Id or URL</label>
+			<form action="/redirection" method="GET">
+				<div class="form-group">
+					<label  for="videoQuery">Youtube Video Id or URL</label>
 					<input class="form-control" id="videoQuery" name="videoQuery" required>
 				</div>
 				<button type="submit" class="btn btn-primary">Play Song</button>
 			</form>
 			<hr>
-			<form action="/redirection" method="GET" class="form-inline">
-				<div class="form-group mx-sm-3 mb-2">
+			<form action="/redirection" method="GET">
+				<div class="form-group">
 					<label class="mx-sm-2" for="playlistQuery">Playlist Id or URL</label>
 					<input class="form-control" id="playlistQuery" name="playlistQuery" required>
 				</div>

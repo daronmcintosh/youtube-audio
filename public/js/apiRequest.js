@@ -12,7 +12,7 @@ const youtube = google.youtube({
 async function buildPlaylist(playlistId) {
 	const res = await youtube.playlistItems.list({
 		playlistId: playlistId,
-		maxResults: 5,
+		maxResults: 25,
 		part: "snippet"
 	});
 	var tracks = [];
