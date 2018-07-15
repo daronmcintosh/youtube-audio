@@ -10,14 +10,16 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css">
     <!-- Plyr CSS -->
     <link rel="stylesheet" href="https://cdn.plyr.io/3.3.21/plyr.css">
+    <!-- Player CSS -->
+    <link rel="stylesheet" href="/stylesheets/player.css">
     <title>Youtubify</title>
 </head>
 
 <body>
     <div class="container">
-        <span id="npTitle">
+        <p id="npTitle" class="text-center">
             <%= title %>
-        </span>
+        </p>
         <div id="audioContainer">
                 <audio class="js-player" preload="none" src="<%= src %>" data-plyr-config='{ "duration": "<%= duration %>" }'></audio>
         </div>
