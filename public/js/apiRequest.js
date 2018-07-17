@@ -56,21 +56,21 @@ async function buildSearch(query) {
 	var items = result.data.items;
 	for (const item of items) {
 		var searchObj = {};
-		var kind = item.kind;
+		var kind = item.id.kind;
 		searchObj.kind = kind;
 		if (kind === "youtube#video") {
-			searchObj.videoId = item.id.videoId;
+			searchObj.id = item.id.videoId;
 		}
 		if (kind === "youtube#playlist") {
-			searchObj.playlistId = item.id.playlistId;
+			searchObj.id = item.id.playlistId;
+		}
+		if (kind === "youtube#channel") {
+			searchObj.id = item.id.channelId;
 		}
 		searchObj.title = item.snippet.title;
 		searchObj.channelTitle = item.snippet.channelTitle;
-
-		// build playlist or video object around which item was clicked instead of making another api request here
-		// let videoObj = await buildVideo(videoId);
-		// searchObj.duration = await videoObj.duration;
-		// searchObj.src = "http://localhost:3000/api/play/" + videoId;
+		searchObj.imgSrc = item.snippet.thumbnails.high.url;
+		searchObj.description = item.snippet.description;
 		searchResults.push(searchObj);
 	}
 	return searchResults;

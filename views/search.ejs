@@ -1,0 +1,43 @@
+<% include ./partials/header %>
+    <div class="col-lg-6">
+        <h5>Results</h5>
+        <hr>
+        <div class="list-group">
+            <% searchResults.forEach(function(result){ %>
+                <% var kind = result.kind; %>
+                <% var link = ""; %>
+                <% var imgClass = ""; %>
+                <% if (kind.includes("video")) { %>
+                    <% link = "/player/" + result.id; %>
+                    <% imgClass = "img-fluid rounded w-100"; %>
+                <% } else if (kind.includes("playlist")) { %>
+                    <% link = "/playlist/" + result.id; %>
+                    <% imgClass = "img-fluid rounded w-100"; %>
+                <% } else { %>
+                    <% link = "/channel/" + result.id; %>
+                    <% imgClass = "img-fluid rounded-circle w-100"; %>
+                <% } %>
+                <a class="list-group-item" href="<%= link %>">
+                    <div class="card flex-row flex-wrap">
+                        <div class="card-header border-0 w-25 text-center">
+                            <img src="<%= result.imgSrc %>" alt="error getting image" class="<%= imgClass %>">
+                        </div>
+                        <div class="card-block px-2">
+                            <h5 class="card-title">
+                                <%= result.title.substring(0, 70) + "..." %>
+                            </h5>
+                            <h6 class="mb-2 text-muted">
+                                <% if(!kind.includes("channel")){ %>
+                                    <%= result.channelTitle %>
+                                <% } %>
+                            </h6>
+                            <p class="card-text">
+                                <%= result.description.substring(0, 70) + "..." %>
+                            </p>
+                        </div>
+                    </div>
+                </a>
+            <% }) %>
+        </div>
+    </div>
+<% include ./partials/footer %>

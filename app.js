@@ -38,8 +38,8 @@ app.get("/api/request/", function (req, res) {
 			res.type("json");
 			res.write(JSON.stringify(result));
 			res.end();
-		}).catch(function(err){
-			if(err){
+		}).catch(function (err) {
+			if (err) {
 				invalidId(res);
 			}
 		});
@@ -48,8 +48,8 @@ app.get("/api/request/", function (req, res) {
 			res.type("json");
 			res.write(JSON.stringify(result));
 			res.end();
-		}).catch(function(err){
-			if(err){
+		}).catch(function (err) {
+			if (err) {
 				invalidId(res);
 			}
 		});
@@ -64,18 +64,29 @@ app.get("/player/:videoId", function (req, res) {
 		let duration = result.duration;
 		let title = result.title;
 		res.render("player", { src: src, duration: duration, title: title });
-	}).catch(function(err){
-		if(err){
+	}).catch(function (err) {
+		if (err) {
 			invalidId(res);
 		}
 	});
 });
 
-// Playlist route
+// Playlist Route
 app.get("/playlist/:playlistId", function (req, res) {
 	apiRequest.buildPlaylist(req.params.playlistId).then(function (playlistItems) {
 		res.render("playlist", { playlistItems: playlistItems });
-	}).catch(function(err){
+	}).catch(function (err) {
+		if (err) {
+			invalidId(res);
+		}
+	});
+});
+
+// Search Route
+app.get("/results/", function (req, res) {
+	apiRequest.buildSearch(req.query.searchQuery).then(function (searchResults) {
+		res.render("search", { searchResults: searchResults });
+	}).catch(function (err) {
 		if(err){
 			invalidId(res);
 		}
@@ -125,6 +136,6 @@ function playlistIdParser(query) {
 }
 
 // If the youtube api returns an error, it redirects user to this page
-function invalidId(res){
+function invalidId(res) {
 	res.render("invalid");
 }

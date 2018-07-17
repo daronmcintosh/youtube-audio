@@ -1,3 +1,34 @@
 label {
     font-size: large;
 }
+
+/* Search CSS */
+.list-group-item {
+    display: contents;
+}
+
+.card-header.border-0.w-25.text-center {
+    background-color: #fff;
+}
+h5 {
+    color: #000;
+}
+
+p {
+    color: hsl(0, 0%, 53.3%);
+    font-size: small;
+}
+
+.card {
+    border: none;
+    padding-bottom: 20px;
+}
+
+.navbar {
+    justify-content: start;
+    margin-bottom: 2%;
+}
+
+.navbar-brand {
+    padding-right: 30%;
+}
