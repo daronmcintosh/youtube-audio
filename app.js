@@ -56,10 +56,9 @@ app.get("/api/request/", function (req, res) {
 	}
 });
 
-// Plyr player
-app.get("/player/:videoId", function (req, res) {
-	// This route should only play streams from this domain
-	apiRequest.buildVideo(req.params.videoId).then(function (result) {
+// Play single song route
+app.get("/playSong", function (req, res) {
+	apiRequest.buildVideo(req.query.id).then(function (result) {
 		let src = result.src;
 		let duration = result.duration;
 		let title = result.title;
@@ -71,9 +70,9 @@ app.get("/player/:videoId", function (req, res) {
 	});
 });
 
-// Playlist Route
-app.get("/playlist/:playlistId", function (req, res) {
-	apiRequest.buildPlaylist(req.params.playlistId).then(function (playlistItems) {
+// Play Playlist Route
+app.get("/playPlaylist", function (req, res) {
+	apiRequest.buildPlaylist(req.query.id).then(function (playlistItems) {
 		res.render("playlist", { playlistItems: playlistItems });
 	}).catch(function (err) {
 		if (err) {
@@ -94,13 +93,14 @@ app.get("/results/", function (req, res) {
 });
 
 // Redirection route to get to player or playlist player from index page, this was done to make the url cleaner
+// and to prevent sending a url which will cause the app not to find the page from the index page forms
 app.get("/redirection/", function (req, res) {
 	if (req.query.videoQuery) {
 		let videoId = videoIdParser(req.query.videoQuery);
-		res.redirect("/player/" + videoId);
+		res.redirect("/playSong?id=" + videoId);
 	} else if (req.query.playlistQuery) {
 		let playlistId = playlistIdParser(req.query.playlistQuery);
-		res.redirect("/playlist/" + playlistId);
+		res.redirect("/playPlaylist?id=" + playlistId);
 	}
 });
 
