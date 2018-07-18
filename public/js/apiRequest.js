@@ -67,6 +67,7 @@ async function buildSearch(query) {
 		if (kind === "youtube#channel") {
 			searchObj.id = item.id.channelId;
 		}
+		searchObj.channelId = item.snippet.channelId;
 		searchObj.title = item.snippet.title;
 		searchObj.channelTitle = item.snippet.channelTitle;
 		searchObj.imgSrc = item.snippet.thumbnails.high.url;

@@ -29,11 +29,13 @@
                                     </h5>
                                     <h6 class="mb-2 text-muted">
                                         <% if(!kind.includes("channel")){ %>
-                                            <%= result.channelTitle %>
+                                            <a href="<%= '/channel/' + result.channelId %>">
+                                                <%= result.channelTitle %>
+                                            </a>
                                         <% } %>
                                     </h6>
                                     <p class="card-text">
-                                        <%= result.description.substring(0, 70) + "..." %>
+                                        <%= result.description %>
                                     </p>
                                 </div>
                             </div>
