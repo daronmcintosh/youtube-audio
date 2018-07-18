@@ -92,6 +92,11 @@ app.get("/results/", function (req, res) {
 	});
 });
 
+// Channel Route
+app.get("/channel/:channelId/", function (req, res) {
+	res.redirect(req.params.channelId + "/playlists");
+});
+
 // Channel's Playlist Route
 app.get("/channel/:channelId/playlists", function (req, res) {
 	apiRequest.buildPlaylists(req.params.channelId).then(function (playlists) {
