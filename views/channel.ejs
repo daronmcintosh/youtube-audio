@@ -1,0 +1,43 @@
+<% include ./partials/header %>
+    <div class="row justify-content-center">
+        <ul class="nav nav-pills">
+            <li class="nav-item">
+                <a class="nav-link <%= playlists ? 'active' : '' %>" href="playlists">Playlist</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link <%= playlists ? '' : 'active' %>" href="videos">Popular Videos</a>
+            </li>
+        </ul>
+        <div class="col-lg-10">
+            <h5 id="playlistHeader">
+                <%= playlists ? playlists.name : videos.name %>'s Playlists
+            </h5>
+            <hr>
+            <div class="card-deck" id="deck">
+            <% if(videos !== null){ %>
+                <% videos.videos.forEach(function(result){ %>
+                    <a href="/playSong?id=<%= result.id %>" class="custom-card w-25">
+                        <div class="card">
+                            <img src="<%= result.imgSrc %>" alt="no image found" class="card-img-top">
+                            <div class="card-body">
+                                <h5 class="card-title"><%= result.title %></h5>
+                            </div>
+                        </div>
+                    </a>
+                <% }) %>
+            <% }else{ %>
+                <% playlists.playlists.forEach(function(result){ %>
+                    <a href="/playPlaylist?id=<%= result.id %>" class="custom-card w-25">
+                        <div class="card">
+                            <img src="<%= result.imgSrc %>" alt="no image found" class="card-img-top">
+                            <div class="card-body">
+                                <h5 class="card-title"><%= result.title %></h5>
+                            </div>
+                        </div>
+                    </a>
+                <% }) %>
+            <% } %>
+            </div>
+        </div>
+    </div>
+<% include ./partials/footer %>

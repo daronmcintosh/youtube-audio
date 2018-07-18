@@ -9,10 +9,10 @@ const youtube = google.youtube({
 	auth: process.env.API_KEY // eslint-disable-line
 });
 
-async function buildPlaylist(playlistId) {
+async function buildPlaylistItems(playlistId) {
 	const result = await youtube.playlistItems.list({
 		playlistId: playlistId,
-		maxResults: 25,
+		maxResults: 50,
 		part: "snippet"
 	});
 	var tracks = [];
@@ -76,6 +76,53 @@ async function buildSearch(query) {
 	return searchResults;
 }
 
-module.exports.buildPlaylist = buildPlaylist;
+async function buildPlaylists(channelId){
+	const result = await youtube.playlists.list({
+		maxResults: 24,
+		channelId: channelId,
+		part: "snippet"
+	});
+	let channelObj = {
+		name: "",
+		playlists: []
+	};
+	channelObj.name = result.data.items[0].snippet.channelTitle;
+	var items = result.data.items;
+	for (const item of items) {
+		var playlistObj = {};
+		playlistObj.id = item.id;
+		playlistObj.title = item.snippet.title;
+		playlistObj.imgSrc = item.snippet.thumbnails.high.url;
+		channelObj.playlists.push(playlistObj);
+	}
+	return channelObj;
+}
+
+async function buildPopularVideos(channelId){
+	const result = await youtube.search.list({
+		part: "snippet",
+		channelId: channelId,
+		order: "viewCount",
+		maxResults: 25
+	});
+	let channelObj = {
+		name: "",
+		videos: []
+	};
+	channelObj.name = result.data.items[0].snippet.channelTitle;
+	var items = result.data.items;
+	for (const item of items) {
+		var videoObj = {};
+		videoObj.id = item.id.videoId;
+		videoObj.title = item.snippet.title;
+		videoObj.imgSrc = item.snippet.thumbnails.high.url;
+		channelObj.videos.push(videoObj);
+	}
+	return channelObj;
+}
+
+module.exports.buildPlaylistItems = buildPlaylistItems;
 module.exports.buildVideo = buildVideo;
 module.exports.buildSearch = buildSearch;
+module.exports.buildPlaylists = buildPlaylists;
+module.exports.buildPopularVideos = buildPopularVideos;

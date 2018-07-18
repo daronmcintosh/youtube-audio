@@ -44,7 +44,7 @@ app.get("/api/request/", function (req, res) {
 			}
 		});
 	} else {
-		apiRequest.buildPlaylist(playlistId).then(function (result) {
+		apiRequest.buildPlaylistItems(playlistId).then(function (result) {
 			res.type("json");
 			res.write(JSON.stringify(result));
 			res.end();
@@ -72,7 +72,7 @@ app.get("/playSong", function (req, res) {
 
 // Play Playlist Route
 app.get("/playPlaylist", function (req, res) {
-	apiRequest.buildPlaylist(req.query.id).then(function (playlistItems) {
+	apiRequest.buildPlaylistItems(req.query.id).then(function (playlistItems) {
 		res.render("playlist", { playlistItems: playlistItems });
 	}).catch(function (err) {
 		if (err) {
@@ -86,7 +86,29 @@ app.get("/results/", function (req, res) {
 	apiRequest.buildSearch(req.query.searchQuery).then(function (searchResults) {
 		res.render("search", { searchResults: searchResults });
 	}).catch(function (err) {
-		if(err){
+		if (err) {
+			invalidId(res);
+		}
+	});
+});
+
+// Channel's Playlist Route
+app.get("/channel/:channelId/playlists", function (req, res) {
+	apiRequest.buildPlaylists(req.params.channelId).then(function (playlists) {
+		res.render("channel", { playlists: playlists, videos: null });
+	}).catch(function (err) {
+		if (err) {
+			invalidId(res);
+		}
+	});
+});
+
+// Channel's Popular Videos Route
+app.get("/channel/:channelId/videos", function (req, res) {
+	apiRequest.buildPopularVideos(req.params.channelId).then(function (videos) {
+		res.render("channel", { videos: videos, playlists: null });
+	}).catch(function (err) {
+		if (err) {
 			invalidId(res);
 		}
 	});

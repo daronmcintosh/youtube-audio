@@ -10,8 +10,10 @@ label {
 .card-header.border-0.w-25.text-center {
     background-color: #fff;
 }
+
 h5 {
     color: #000;
+    font-size: medium;
 }
 
 p {
@@ -31,4 +33,13 @@ p {
 
 .navbar-brand {
     padding-right: 30%;
+}
+
+.custom-card:hover {
+    color: #fff;
+    text-decoration: none;
+}
+
+.card-img-top {
+    width: 180px;
 }
