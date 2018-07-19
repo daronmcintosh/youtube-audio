@@ -1,27 +1,11 @@
-<!doctype html>
-<html lang="en">
+<% include ./partials/header %>
 
-<head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css">
-    <!-- Plyr CSS -->
-    <link rel="stylesheet" href="https://cdn.plyr.io/3.3.21/plyr.css">
-    <!-- Playlist CSS -->
-    <link rel="stylesheet" href="/stylesheets/playlist.css">
-    <title>Youtube Audio</title>
-</head>
-
-<body>
-	<div class="container">
-        <div class="column add-bottom">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
             <div id="mainwrap">
                 <div id="nowPlay">
                     <span id="npAction">Paused...</span>
-                    <span id="npTitle"></span>
+                    <span id="npTitle" class="float-right"></span>
                 </div>
                 <div id="audiowrap">
                     <div id="audio0">
@@ -29,20 +13,20 @@
                             <audio class="js-player" preload="none" src="<%= item.src %>" data-plyr-config='{ "duration": "<%= item.duration %>" }'></audio>
                         <% }) %>
                     </div>
-                    <div id="tracks">
-                        <a id="btnPrev">&larr;</a>
-                        <a id="btnNext">&rarr;</a>
+                    <div id="tracks" class="d-flex justify-content-center p-2">
+                        <i class="fas fa-step-backward fa-lg" id="btnPrev"></i>
+                        <i class="fas fa-step-forward fa-lg" id="btnNext"></i>
                     </div>
                 </div>
                 <div id="plwrap">
-                    <ul id="plList">
+                    <ul id="plList" class="list-group">
 						<% playlistItems.forEach(function(item, i){ %>
 							<% var trackNumber = item.track %>
 							<% if (item.track.toString().length === 1) { %>
 								<% trackNumber = "0" + trackNumber %>
                             <% } %>
                             <% var durationInMinutes = moment.utc(item.duration*1000).format("mm:ss"); %>
-							<li data-src="<%= item.src %>" data-index="<%= i %>"><div class="plItem"><span class="plNum"><%= trackNumber %>.</span><span class="plTitle"><%= item.name %></span><span class="plLength"><%= durationInMinutes %></span></div></li>
+							<li data-src="<%= item.src %>" data-index="<%= i %>" class="list-group-item"><div class="plItem"><span class="plNum"><%= trackNumber %>. </span><span class="plTitle"><%= item.name %></span><span class="plLength float-right"><%= durationInMinutes %></span></div></li>
 						<% }) %>
 					</ul>
                 </div>
@@ -50,19 +34,4 @@
         </div>
 	</div>
 
-</div>
-
-<script
-          src="https://code.jquery.com/jquery-3.3.1.min.js"
-          integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
-          crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/plyr/3.3.21/plyr.min.js"></script>
-
-<script src="/js/playlist.js"></script>
-
-</body>
-
-</html>
+<% include ./partials/footer %>

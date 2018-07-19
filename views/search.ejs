@@ -1,7 +1,7 @@
 <% include ./partials/header %>
     <div class="row justify-content-center">
         <div class="col-lg-10">
-                <h5>Results</h5>
+                <h5 class="header">Results</h5>
                 <hr>
                 <div class="list-group">
                     <% searchResults.forEach(function(result){ %>
@@ -18,7 +18,7 @@
                             <% link = "/channel/" + result.id + "/playlists"; %>
                             <% imgClass = "img-fluid rounded-circle w-100"; %>
                         <% } %>
-                        <a class="list-group-item" href="<%= link %>">
+                        <a class="list-group-item custom-card-search" href="<%= link %>">
                             <div class="card flex-row flex-wrap">
                                 <div class="card-header border-0 w-25 text-center">
                                     <img src="<%= result.imgSrc %>" alt="error getting image" class="<%= imgClass %>">
@@ -27,9 +27,9 @@
                                     <h5 class="card-title">
                                         <%= result.title %>
                                     </h5>
-                                    <h6 class="mb-2 text-muted">
+                                    <h6 class="mb-2">
                                         <% if(!kind.includes("channel")){ %>
-                                            <a href="<%= '/channel/' + result.channelId %>">
+                                            <a href="<%= '/channel/' + result.channelId %>" class="channel-link">
                                                 <%= result.channelTitle %>
                                             </a>
                                         <% } %>

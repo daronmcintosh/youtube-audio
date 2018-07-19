@@ -89,12 +89,11 @@ if (supportsAudio) {
 function loadTrack(id) {
 	for (var i = 0; i < playListItems.length; i++) {
 		if (i === id) {
-			playListItems[id].classList.add("plSel");
+			playListItems[id].classList.add("active");
 			npTitle.textContent = playListItems[id].getElementsByClassName("plTitle")[0].textContent;
 			index = id;
-			// audio.src = playListItems[i].getAttribute("data-src");
 		} else {
-			playListItems[i].classList.remove("plSel");
+			playListItems[i].classList.remove("active");
 		}
 	}
 }

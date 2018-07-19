@@ -34,7 +34,6 @@ app.get("/api/request/", function (req, res) {
 	let playlistId = playlistIdParser(query);
 	if (videoId.length == 11) {
 		apiRequest.buildVideo(videoId).then(function (result) {
-			// result.duration = moment.utc(result.duration * 1000).format("mm:ss");
 			res.type("json");
 			res.write(JSON.stringify(result));
 			res.end();
