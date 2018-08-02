@@ -9,9 +9,7 @@
                 </div>
                 <div id="audiowrap">
                     <div id="audio0">
-                        <% playlistItems.forEach(function(item){ %>
-                            <audio class="js-player" preload="none" src="<%= item.src %>" data-plyr-config='{ "duration": "<%= item.duration %>" }'></audio>
-                        <% }) %>
+                        <audio id="audio-player"></audio>
                     </div>
                     <div id="tracks" class="d-flex justify-content-center p-2">
                         <i class="fas fa-step-backward fa-lg" id="btnPrev"></i>
@@ -25,8 +23,7 @@
 							<% if (item.track.toString().length === 1) { %>
 								<% trackNumber = "0" + trackNumber %>
                             <% } %>
-                            <% var durationInMinutes = moment.utc(item.duration*1000).format("mm:ss"); %>
-							<li data-src="<%= item.src %>" data-index="<%= i %>" class="list-group-item"><div class="plItem"><span class="plNum"><%= trackNumber %>. </span><span class="plTitle"><%= item.name %></span><span class="plLength float-right"><%= durationInMinutes %></span></div></li>
+							<li data-src="<%= item.src %>" data-index="<%= i %>" class="list-group-item"><div class="plItem"><span class="plNum"><%= trackNumber %>. </span><span class="plTitle"><%= item.name %></span><span class="plLength float-right"></span></div></li>
 						<% }) %>
 					</ul>
                 </div>

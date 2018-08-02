@@ -17,11 +17,21 @@ app.get("/", function (req, res) {
 
 // SOURCE URL FOR AUDIO
 app.get("/api/play/:videoId", function (req, res) {
-	// Secure this route to prevent unauthorized access and/or convert to a post route
-	// Find a better name for this route
 	let requestUrl = "http://youtube.com/watch?v=" + req.params.videoId;
 	try {
-		stream(requestUrl).pipe(res);
+		// calculate length in bytes, (((bitrate * (lengthInSeconds - minusFiveThisIsAnEstimateBecauseItSeemsToBeOffByThis)) / bitsToBytes) * kiloBytesToBytes)
+		apiRequest.getDuration(req.params.videoId).then(function (duration) {
+			var durationInBytes = (((128 * (duration - 4)) / 8) * 1024);
+			res.writeHead(200, {
+				'Content-Length': durationInBytes,
+				'Transfer-Encoding': 'chuncked',
+			});
+			stream(requestUrl).pipe(res);
+		}).catch(function (err) {
+			if (err) {
+				// do nothing
+			}
+		});
 	} catch (exception) {
 		res.status(500).send(exception);
 	}
@@ -59,9 +69,8 @@ app.get("/api/request/", function (req, res) {
 app.get("/playSong", function (req, res) {
 	apiRequest.buildVideo(req.query.id).then(function (result) {
 		let src = result.src;
-		let duration = result.duration;
 		let title = result.title;
-		res.render("player", { src: src, duration: duration, title: title });
+		res.render("player", { src: src, title: title });
 	}).catch(function (err) {
 		if (err) {
 			invalidId(res);

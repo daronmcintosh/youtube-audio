@@ -23,8 +23,6 @@ async function buildPlaylistItems(playlistId) {
 		var videoId = item.snippet.resourceId.videoId;
 		trackObj.track = trackCounter;
 		trackObj.name = item.snippet.title;
-		let videoObj = await buildVideo(videoId);
-		trackObj.duration = await videoObj.duration;
 		trackObj.src = "http://localhost:3000/api/play/" + videoId;
 		trackCounter++;
 		tracks.push(trackObj);
@@ -39,7 +37,6 @@ async function buildVideo(videoId) {
 		part: "contentDetails, snippet"
 	}).then(function (result) {
 		videoObj.title = result.data.items[0].snippet.title;
-		videoObj.duration = moment.duration(result.data.items[0].contentDetails.duration).asSeconds();
 		videoObj.src = "http://localhost:3000/api/play/" + videoId;
 	});
 	return videoObj;
@@ -77,7 +74,7 @@ async function buildSearch(query) {
 	return searchResults;
 }
 
-async function buildPlaylists(channelId){
+async function buildPlaylists(channelId) {
 	const result = await youtube.playlists.list({
 		maxResults: 24,
 		channelId: channelId,
@@ -99,7 +96,7 @@ async function buildPlaylists(channelId){
 	return channelObj;
 }
 
-async function buildPopularVideos(channelId){
+async function buildPopularVideos(channelId) {
 	const result = await youtube.search.list({
 		part: "snippet",
 		channelId: channelId,
@@ -122,8 +119,20 @@ async function buildPopularVideos(channelId){
 	return channelObj;
 }
 
+async function getDuration(videoId) {
+	var duration = 0;
+	await youtube.videos.list({
+		id: videoId,
+		part: "contentDetails"
+	}).then(function (result) {
+		duration = moment.duration(result.data.items[0].contentDetails.duration).asSeconds();
+	});
+	return duration;
+}
+
 module.exports.buildPlaylistItems = buildPlaylistItems;
 module.exports.buildVideo = buildVideo;
 module.exports.buildSearch = buildSearch;
 module.exports.buildPlaylists = buildPlaylists;
 module.exports.buildPopularVideos = buildPopularVideos;
+module.exports.getDuration = getDuration;
