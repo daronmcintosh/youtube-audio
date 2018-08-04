@@ -18,29 +18,31 @@
                             <% link = "/channel/" + result.id + "/playlists"; %>
                             <% imgClass = "img-fluid rounded-circle w-100"; %>
                         <% } %>
-                        <a class="list-group-item custom-card-search" href="<%= link %>">
-                            <div class="card flex-row flex-wrap">
-                                <div class="card-header border-0 w-25 text-center">
-                                    <img src="<%= result.imgSrc %>" alt="error getting image" class="<%= imgClass %>">
+                        <% if(result.id.length > 0){ %>
+                            <a class="list-group-item custom-card-search" href="<%= link %>">
+                                <div class="card flex-row flex-wrap">
+                                    <div class="card-header border-0 w-25 text-center">
+                                        <img src="<%= result.imgSrc %>" alt="error getting image" class="<%= imgClass %>">
+                                    </div>
+                                    <div class="card-block px-2">
+                                        <h5 class="card-title">
+                                            <%= result.title %>
+                                        </h5>
+                                        <h6 class="mb-2">
+                                            <% if(!kind.includes("channel")){ %>
+                                                <a href="<%= '/channel/' + result.channelId %>" class="channel-link">
+                                                    <%= result.channelTitle %>
+                                                </a>
+                                            <% } %>
+                                        </h6>
+                                        <p class="card-text">
+                                            <%= result.description %>
+                                        </p>
+                                    </div>
                                 </div>
-                                <div class="card-block px-2">
-                                    <h5 class="card-title">
-                                        <%= result.title %>
-                                    </h5>
-                                    <h6 class="mb-2">
-                                        <% if(!kind.includes("channel")){ %>
-                                            <a href="<%= '/channel/' + result.channelId %>" class="channel-link">
-                                                <%= result.channelTitle %>
-                                            </a>
-                                        <% } %>
-                                    </h6>
-                                    <p class="card-text">
-                                        <%= result.description %>
-                                    </p>
-                                </div>
-                            </div>
-                        </a>
-                        <hr>
+                            </a>
+                            <hr>
+                        <% } %>
                     <% }) %>
                 </div>
             </div>

@@ -10,31 +10,39 @@
         </ul>
         <div class="col-lg-10">
             <h5 class="header">
-                <%= playlists ? playlists.name : videos.name %>'s Playlists
+                <% if((playlists !== null && playlists.playlistsItems.length > 0) || (videos !== null && videos.videos.length > 0)){ %>
+                    <%= playlists ? playlists.name : videos.name %>'s <%= playlists ? "Playlists" : "Videos" %>
+                <% }else{ %>
+                    This page is empty
+                <% } %>
             </h5>
             <hr>
             <div class="card-deck" id="deck">
             <% if(videos !== null){ %>
                 <% videos.videos.forEach(function(result){ %>
-                    <a href="/playSong?id=<%= result.id %>" class="custom-card w-25">
-                        <div class="card">
-                            <img src="<%= result.imgSrc %>" alt="no image found" class="card-img-top">
-                            <div class="card-body">
-                                <h5 class="card-title"><%= result.title %></h5>
+                    <% if(result.id.length > 0){ %>
+                        <a href="/playSong?id=<%= result.id %>" class="custom-card w-25">
+                            <div class="card">
+                                <img src="<%= result.imgSrc %>" alt="no image found" class="card-img-top">
+                                <div class="card-body">
+                                    <h5 class="card-title"><%= result.title %></h5>
+                                </div>
                             </div>
-                        </div>
-                    </a>
+                        </a>
+                    <% } %>
                 <% }) %>
             <% }else{ %>
-                <% playlists.playlists.forEach(function(result){ %>
-                    <a href="/playPlaylist?id=<%= result.id %>" class="custom-card w-25">
-                        <div class="card">
-                            <img src="<%= result.imgSrc %>" alt="no image found" class="card-img-top">
-                            <div class="card-body">
-                                <h5 class="card-title"><%= result.title %></h5>
+                <% playlists.playlistsItems.forEach(function(result){ %>
+                    <% if(result.id.length > 0){ %>
+                        <a href="/playPlaylist?id=<%= result.id %>" class="custom-card w-25">
+                            <div class="card">
+                                <img src="<%= result.imgSrc %>" alt="no image found" class="card-img-top">
+                                <div class="card-body">
+                                    <h5 class="card-title"><%= result.title %></h5>
+                                </div>
                             </div>
-                        </div>
-                    </a>
+                        </a>
+                    <% } %>
                 <% }) %>
             <% } %>
             </div>

@@ -1,19 +1,19 @@
-require("dotenv").config();
-const { google } = require("googleapis");
-const moment = require("moment");
-
+require('dotenv').config();
+const { google } = require('googleapis');
+const moment = require('moment');
 
 // initialize the Youtube API library
 const youtube = google.youtube({
-	version: "v3",
+	version: 'v3',
 	auth: process.env.API_KEY // eslint-disable-line
 });
+
 
 async function buildPlaylistItems(playlistId) {
 	const result = await youtube.playlistItems.list({
 		playlistId: playlistId,
 		maxResults: 50,
-		part: "snippet"
+		part: 'snippet'
 	});
 	var tracks = [];
 	var trackCounter = 1;
@@ -23,7 +23,7 @@ async function buildPlaylistItems(playlistId) {
 		var videoId = item.snippet.resourceId.videoId;
 		trackObj.track = trackCounter;
 		trackObj.name = item.snippet.title;
-		trackObj.src = "http://localhost:3000/api/play/" + videoId;
+		trackObj.src = '/api/play/' + videoId;
 		trackCounter++;
 		tracks.push(trackObj);
 	}
@@ -34,20 +34,21 @@ async function buildVideo(videoId) {
 	let videoObj = {};
 	await youtube.videos.list({
 		id: videoId,
-		part: "contentDetails, snippet"
+		part: 'contentDetails, snippet'
 	}).then(function (result) {
 		videoObj.title = result.data.items[0].snippet.title;
-		videoObj.src = "http://localhost:3000/api/play/" + videoId;
+		result.data.items[0].s;
+		videoObj.src = '/api/play/' + videoId;
 	});
 	return videoObj;
 }
 
 async function buildSearch(query) {
 	const result = await youtube.search.list({
-		type: "",
+		type: '',
 		q: query,
 		maxResults: 25,
-		part: "snippet"
+		part: 'snippet'
 	});
 	let searchResults = [];
 	var items = result.data.items;
@@ -55,13 +56,13 @@ async function buildSearch(query) {
 		var searchObj = {};
 		var kind = item.id.kind;
 		searchObj.kind = kind;
-		if (kind === "youtube#video") {
+		if (kind === 'youtube#video') {
 			searchObj.id = item.id.videoId;
 		}
-		if (kind === "youtube#playlist") {
+		if (kind === 'youtube#playlist') {
 			searchObj.id = item.id.playlistId;
 		}
-		if (kind === "youtube#channel") {
+		if (kind === 'youtube#channel') {
 			searchObj.id = item.id.channelId;
 		}
 		searchObj.channelId = item.snippet.channelId;
@@ -78,33 +79,35 @@ async function buildPlaylists(channelId) {
 	const result = await youtube.playlists.list({
 		maxResults: 24,
 		channelId: channelId,
-		part: "snippet"
+		part: 'snippet'
 	});
 	let channelObj = {
-		name: "",
-		playlists: []
+		name: '',
+		playlistsItems: []
 	};
-	channelObj.name = result.data.items[0].snippet.channelTitle;
 	var items = result.data.items;
-	for (const item of items) {
-		var playlistObj = {};
-		playlistObj.id = item.id;
-		playlistObj.title = item.snippet.title;
-		playlistObj.imgSrc = item.snippet.thumbnails.high.url;
-		channelObj.playlists.push(playlistObj);
+	if (items.length > 0) {
+		for (const item of items) {
+			var playlistObj = {};
+			playlistObj.id = item.id;
+			playlistObj.title = item.snippet.title;
+			playlistObj.imgSrc = item.snippet.thumbnails.high.url;
+			channelObj.playlistsItems.push(playlistObj);
+		}
+		channelObj.name = result.data.items[0].snippet.channelTitle;
 	}
 	return channelObj;
 }
 
 async function buildPopularVideos(channelId) {
 	const result = await youtube.search.list({
-		part: "snippet",
+		part: 'snippet',
 		channelId: channelId,
-		order: "viewCount",
+		order: 'viewCount',
 		maxResults: 25
 	});
 	let channelObj = {
-		name: "",
+		name: '',
 		videos: []
 	};
 	channelObj.name = result.data.items[0].snippet.channelTitle;
@@ -123,7 +126,7 @@ async function getDuration(videoId) {
 	var duration = 0;
 	await youtube.videos.list({
 		id: videoId,
-		part: "contentDetails"
+		part: 'contentDetails'
 	}).then(function (result) {
 		duration = moment.duration(result.data.items[0].contentDetails.duration).asSeconds();
 	});

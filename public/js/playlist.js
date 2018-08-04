@@ -1,88 +1,153 @@
-var supportsAudio = !!document.createElement("audio").canPlayType;
+const controls = `
+<div class="plyr__controls">
+    <div class="plyr__time plyr__time--current" aria-label="Current time">00:00</div>
+    <div class="plyr__progress">
+        <input data-plyr="seek" type="range" min="0" max="100" step="0.01" value="0" aria-label="Seek">
+        <progress class="plyr__progress__buffer" min="0" max="100" value="0">% buffered</progress>
+        <span role="tooltip" class="plyr__tooltip">00:00</span>
+    </div>
+    <div class="plyr__time plyr__time--duration" aria-label="Duration">00:00</div>
+    <button type="button" class="plyr__control" aria-label="Mute" data-plyr="mute">
+        <svg class="icon--pressed" role="presentation"><use xlink:href="#plyr-muted"></use></svg>
+        <svg class="icon--not-pressed" role="presentation"><use xlink:href="#plyr-volume"></use></svg>
+        <span class="label--pressed plyr__tooltip" role="tooltip">Unmute</span>
+        <span class="label--not-pressed plyr__tooltip" role="tooltip">Mute</span>
+    </button>
+    <div class="plyr__volume">
+        <input data-plyr="volume" type="range" min="0" max="1" step="0.05" value="1" autocomplete="off" aria-label="Volume">
+    </div>
+</div>
+`;
+
+var supportsAudio = !!document.createElement('audio').canPlayType;
 if (supportsAudio) {
-	var btnPrev = document.getElementById("btnPrev");
-	var btnNext = document.getElementById("btnNext");
-	var audioPlayer = document.getElementById("audio-player")
-	var npAction = document.getElementById("npAction");
-	var npTitle = document.getElementById("npTitle");
-	var playListItems = document.querySelectorAll("#plList li");
+	var btnPrev = document.querySelector('#previous-button');
+	var btnNext = document.querySelector('#next-button');
+	var playPauseBtn = document.querySelector('#play-pause-button');
+	var audioPlayer = document.querySelector('#audio-player');
+	var playListItems = document.querySelectorAll('#plList li');
+	var title = document.querySelector('#song-title');
 	var trackCount = playListItems.length;
-	var playing = false;
+	var isPlaying = false;
 	var index = 0;
-	new Plyr("#audio-player");
+	/*global Plyr*/
+	new Plyr(audioPlayer, { controls });
 
+	// var heightOfPlayer = document.querySelector('.player-container').clientHeight;
+	// document.querySelector('.list-group').style.marginBottom = heightOfPlayer + 50 + 'px';
 
-	audioPlayer.addEventListener("play", function () {
-		playing = true;
-		npAction.textContent = "Now Playing...";
+	audioPlayer.addEventListener('play', () => {
+		isPlaying = true;
 	});
-	audioPlayer.addEventListener("pause", function () {
-		playing = false;
-		npAction.textContent = "Paused...";
+
+	audioPlayer.addEventListener('pause', () => {
+		isPlaying = false;
 	});
-	audioPlayer.addEventListener("ended", function () {
-		npAction.textContent = "Paused...";
+
+	audioPlayer.addEventListener('ended', () => {
 		if ((index + 1) < trackCount) {
 			index++;
-			loadTrackAndPlay(index);
-			audioPlayer.play();
+			loadTrack(index);
+			playSong();
 		} else {
+			isPlaying = false;
 			index = 0;
-			loadTrackAndPlay(index);
+			loadTrack(index);
 			audioPlayer.pause();
+			showPlayIcon();
 		}
 	});
 
-	for (let i = 0; i < playListItems.length; i++) {
-		playListItems[i].addEventListener("click", function () {
-			index = Number(this.getAttribute("data-index"));
-			loadTrackAndPlay(index);
-		});
-	}
-	btnPrev.addEventListener("click", function () {
+	btnPrev.addEventListener('click', () => {
 		if ((index - 1) > -1) {
 			index--;
-			loadTrackAndPlay(index);
-			if (playing) {
-				audioPlayer.play();
+			loadTrack(index);
+			if (isPlaying) {
+				playSong();
 			}
 		} else {
 			index = 0;
-			loadTrackAndPlay(index);
+			loadTrack(index);
 			audioPlayer.pause();
 		}
 	});
-	btnNext.addEventListener("click", function () {
+
+	playPauseBtn.addEventListener('click', () => {
+		togglePlayPause();
+	});
+
+	btnNext.addEventListener('click', () => {
 		if ((index + 1) < trackCount) {
 			index++;
-			loadTrackAndPlay(index);
-			if (playing) {
-				audioPlayer.play();
+			loadTrack(index);
+			if (isPlaying) {
+				playSong();
 			}
 		} else {
 			index = 0;
-			loadTrackAndPlay(index);
+			loadTrack(index);
 			audioPlayer.pause();
 		}
 	});
+
+	for (var i = 0; i < playListItems.length; i++) {
+		playListItems[i].addEventListener('click', function () {
+			index = Number(this.getAttribute('data-index'));
+			loadTrack(index);
+			if (isPlaying) {
+				playSong();
+			}
+		});
+	}
 	// select first track and play
-	loadTrackAndPlay(0);
+	loadTrack(0);
+	playSong();
 }
 
-
-
-
-function loadTrackAndPlay(id) {
-	var audioPlayer = document.getElementById("audio-player")
+function loadTrack(id) {
 	for (var i = 0; i < playListItems.length; i++) {
 		if (i === id) {
-			playListItems[id].classList.add("active");
-			npTitle.textContent = playListItems[id].getElementsByClassName("plTitle")[0].textContent;
+			playListItems[id].classList.add('active');
+			title.textContent = playListItems[id].getElementsByClassName('plTitle')[0].textContent;
 			index = id;
-			audioPlayer.src = playListItems[id].getAttribute("data-src");
-			audioPlayer.play();
+			audioPlayer.src = playListItems[id].getAttribute('data-src');
+			togglePlayPause();
 		} else {
-			playListItems[i].classList.remove("active");
+			playListItems[i].classList.remove('active');
 		}
 	}
+}
+
+function togglePlayPause() {
+	if (isPlaying) {
+		showPlayIcon();
+		audioPlayer.pause();
+	} else {
+		playSong();
+	}
+}
+
+function playSong() {
+	// Play returns a promise so we have to handle that promise
+	let playPromise = audioPlayer.play();
+
+	if (playPromise !== undefined) {
+		playPromise.then(() => {
+			showPauseIcon();
+		}).catch(error => {
+			if (error) {
+				// alert('There was an error playing. Try clicking play or refreshing');
+			}
+		});
+	}
+}
+
+function showPauseIcon() {
+	playPauseBtn.classList.remove('fa-play');
+	playPauseBtn.classList.add('fa-pause');
+}
+
+function showPlayIcon() {
+	playPauseBtn.classList.remove('fa-pause');
+	playPauseBtn.classList.add('fa-play');
 }

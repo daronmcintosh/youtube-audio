@@ -1,34 +1,32 @@
 <% include ./partials/header %>
 
-    <div class="row justify-content-center">
-        <div class="col-lg-10">
-            <div id="mainwrap">
-                <div id="nowPlay">
-                    <span id="npAction">Paused...</span>
-                    <span id="npTitle" class="float-right"></span>
-                </div>
-                <div id="audiowrap">
-                    <div id="audio0">
-                        <audio id="audio-player"></audio>
-                    </div>
-                    <div id="tracks" class="d-flex justify-content-center p-2">
-                        <i class="fas fa-step-backward fa-lg" id="btnPrev"></i>
-                        <i class="fas fa-step-forward fa-lg" id="btnNext"></i>
-                    </div>
-                </div>
-                <div id="plwrap">
-                    <ul id="plList" class="list-group">
-						<% playlistItems.forEach(function(item, i){ %>
-							<% var trackNumber = item.track %>
-							<% if (item.track.toString().length === 1) { %>
-								<% trackNumber = "0" + trackNumber %>
-                            <% } %>
-							<li data-src="<%= item.src %>" data-index="<%= i %>" class="list-group-item"><div class="plItem"><span class="plNum"><%= trackNumber %>. </span><span class="plTitle"><%= item.name %></span><span class="plLength float-right"></span></div></li>
-						<% }) %>
-					</ul>
-                </div>
-            </div>
+  <div class="row justify-content-center">
+    <div class="col-lg-10">
+      <div id="mainwrap">
+        <div id="plwrap">
+          <ul id="plList" class="list-group">
+            <%playlistItems.forEach(function(item, i){%>
+              <%var trackNumber = item.track%>
+              <%if(item.track.toString().length === 1) { %>
+                <%trackNumber = "0" + trackNumber%>
+              <%}%>
+            <li data-src="<%= item.src %>" data-index="<%= i %>" class="list-group-item"><div class="plItem"><span class="plNum"><%= trackNumber %>.</span><span class="plTitle"><%= item.name %></span><span class="plLength float-right"></span></div></li>
+            <%})%>
+          </ul>
         </div>
-	</div>
+      </div>
+    </div>
+  </div>
+    <div class='player-container'>
+      <div class="song-info">
+        <div id="song-title"></div>
+      </div>
+      <div class="custom-player-controls">
+        <i class="fas fa-step-backward fa-2x" id="previous-button"></i>
+        <i class="fas fa-play fa-2x" id="play-pause-button"></i>
+        <i class="fas fa-step-forward fa-2x" id="next-button"></i>
+      </div>
+      <audio id='audio-player' preload="auto"></audio>
+    </div>
 
 <% include ./partials/footer %>

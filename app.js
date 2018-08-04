@@ -1,35 +1,73 @@
-require("dotenv").config();
-const express = require("express");
-const stream = require("youtube-audio-stream");
-const apiRequest = require("./public/js/apiRequest");
-const moment = require("moment");
+require('dotenv').config();
+const express = require('express');
+const apiRequest = require('./public/js/apiRequest');
+const moment = require('moment');
+const stream = require('./stream');
+const path = require('path');
+const sassMiddleware = require('node-sass-middleware');
 
 const app = express();
 
-app.set("view engine", "ejs");
-app.use(express.static(__dirname + "/public")); // eslint-disable-line
+app.set('view engine', 'ejs');
+app.use(sassMiddleware({
+	/* Options */
+	src: path.join(__dirname, 'public/sass'), // eslint-disable-line
+	dest: path.join(__dirname, 'public/styles'), // eslint-disable-line
+	debug: false,
+	outputStyle: 'compressed',
+	prefix: '/styles'
+}));
+
+app.use(express.static(__dirname + '/public')); // eslint-disable-line
+
 app.locals.moment = moment;
 
 // INDEX PAGE
-app.get("/", function (req, res) {
-	res.render("index");
+app.get('/', (req, res) => {
+	res.render('index');
 });
 
 // SOURCE URL FOR AUDIO
-app.get("/api/play/:videoId", function (req, res) {
-	let requestUrl = "http://youtube.com/watch?v=" + req.params.videoId;
+app.get('/api/play/:videoId', (req, res) => {
+	let requestUrl = 'http://youtube.com/watch?v=' + req.params.videoId;
 	try {
-		// calculate length in bytes, (((bitrate * (lengthInSeconds - minusFiveThisIsAnEstimateBecauseItSeemsToBeOffByThis)) / bitsToBytes) * kiloBytesToBytes)
-		apiRequest.getDuration(req.params.videoId).then(function (duration) {
-			var durationInBytes = (((128 * (duration - 4)) / 8) * 1024);
-			res.writeHead(200, {
-				'Content-Length': durationInBytes,
-				'Transfer-Encoding': 'chuncked',
-			});
-			stream(requestUrl).pipe(res);
-		}).catch(function (err) {
+		apiRequest.getDuration(req.params.videoId).then((duration) => {
+			// calculate length in bytes, (((bitrate * (lengthInSeconds)) / bitsToKiloBytes) * kiloBytesToBytes)
+			var durationInBytes = (((125 * (duration)) / 8) * 1024);
+			if (req.headers.range) {
+				let range = req.headers.range;
+				let parts = range.replace(/bytes=/, '').split('-');
+				let partialstart = parts[0];
+				let partialend = parts[1];
+
+				let start = parseInt(partialstart, 10);
+				let end = partialend ? parseInt(partialend, 10) : durationInBytes - 1;
+
+				let chunksize = (end - start) + 1;
+				res.writeHead(206, {
+					'Content-Type': 'audio/mpeg',
+					'Accept-Ranges': 'bytes',
+					'Content-Length': chunksize,
+					'Content-Range': 'bytes ' + start + '-' + end + '/' + durationInBytes
+				});
+
+				// convert start in bytes to start in seconds
+				// minus one second to prevent content length error
+				let startInSeconds = (start / (1024 * 125) * 8 - 1);
+
+				stream(requestUrl, {}, startInSeconds).pipe(res);
+
+			} else {
+				res.writeHead(200, {
+					'Content-Length': durationInBytes,
+					'Transfer-Encoding': 'chuncked',
+					'Content-Type': 'audio/mpeg'
+				});
+				stream(requestUrl).pipe(res);
+			}
+		}).catch((err) => {
 			if (err) {
-				// do nothing
+				invalidId(res);
 			}
 		});
 	} catch (exception) {
@@ -38,26 +76,26 @@ app.get("/api/play/:videoId", function (req, res) {
 });
 
 // API RESPONSE ROUTE
-app.get("/api/request/", function (req, res) {
+app.get('/api/request/', (req, res) => {
 	let query = req.query.apiQuery;
 	let videoId = videoIdParser(query);
 	let playlistId = playlistIdParser(query);
 	if (videoId.length == 11) {
-		apiRequest.buildVideo(videoId).then(function (result) {
-			res.type("json");
+		apiRequest.buildVideo(videoId).then((result) => {
+			res.type('json');
 			res.write(JSON.stringify(result));
 			res.end();
-		}).catch(function (err) {
+		}).catch((err) => {
 			if (err) {
 				invalidId(res);
 			}
 		});
 	} else {
-		apiRequest.buildPlaylistItems(playlistId).then(function (result) {
-			res.type("json");
+		apiRequest.buildPlaylistItems(playlistId).then((result) => {
+			res.type('json');
 			res.write(JSON.stringify(result));
 			res.end();
-		}).catch(function (err) {
+		}).catch((err) => {
 			if (err) {
 				invalidId(res);
 			}
@@ -66,12 +104,12 @@ app.get("/api/request/", function (req, res) {
 });
 
 // Play single song route
-app.get("/playSong", function (req, res) {
-	apiRequest.buildVideo(req.query.id).then(function (result) {
+app.get('/playSong', (req, res) => {
+	apiRequest.buildVideo(req.query.id).then((result) => {
 		let src = result.src;
 		let title = result.title;
-		res.render("player", { src: src, title: title });
-	}).catch(function (err) {
+		res.render('player', { src: src, title: title });
+	}).catch((err) => {
 		if (err) {
 			invalidId(res);
 		}
@@ -79,10 +117,10 @@ app.get("/playSong", function (req, res) {
 });
 
 // Play Playlist Route
-app.get("/playPlaylist", function (req, res) {
-	apiRequest.buildPlaylistItems(req.query.id).then(function (playlistItems) {
-		res.render("playlist", { playlistItems: playlistItems });
-	}).catch(function (err) {
+app.get('/playPlaylist', (req, res) => {
+	apiRequest.buildPlaylistItems(req.query.id).then((playlistItems) => {
+		res.render('playlist', { playlistItems: playlistItems });
+	}).catch((err) => {
 		if (err) {
 			invalidId(res);
 		}
@@ -90,10 +128,10 @@ app.get("/playPlaylist", function (req, res) {
 });
 
 // Search Route
-app.get("/results/", function (req, res) {
-	apiRequest.buildSearch(req.query.searchQuery).then(function (searchResults) {
-		res.render("search", { searchResults: searchResults });
-	}).catch(function (err) {
+app.get('/results/', (req, res) => {
+	apiRequest.buildSearch(req.query.searchQuery).then((searchResults) => {
+		res.render('search', { searchResults: searchResults });
+	}).catch((err) => {
 		if (err) {
 			invalidId(res);
 		}
@@ -101,15 +139,15 @@ app.get("/results/", function (req, res) {
 });
 
 // Channel Route
-app.get("/channel/:channelId/", function (req, res) {
-	res.redirect(req.params.channelId + "/playlists");
+app.get('/channel/:channelId/', (req, res) => {
+	res.redirect(req.params.channelId + '/videos');
 });
 
 // Channel's Playlist Route
-app.get("/channel/:channelId/playlists", function (req, res) {
-	apiRequest.buildPlaylists(req.params.channelId).then(function (playlists) {
-		res.render("channel", { playlists: playlists, videos: null });
-	}).catch(function (err) {
+app.get('/channel/:channelId/playlists', (req, res) => {
+	apiRequest.buildPlaylists(req.params.channelId).then((playlists) => {
+		res.render('channel', { playlists: playlists, videos: null });
+	}).catch((err) => {
 		if (err) {
 			invalidId(res);
 		}
@@ -117,10 +155,10 @@ app.get("/channel/:channelId/playlists", function (req, res) {
 });
 
 // Channel's Popular Videos Route
-app.get("/channel/:channelId/videos", function (req, res) {
-	apiRequest.buildPopularVideos(req.params.channelId).then(function (videos) {
-		res.render("channel", { videos: videos, playlists: null });
-	}).catch(function (err) {
+app.get('/channel/:channelId/videos', (req, res) => {
+	apiRequest.buildPopularVideos(req.params.channelId).then((videos) => {
+		res.render('channel', { videos: videos, playlists: null });
+	}).catch((err) => {
 		if (err) {
 			invalidId(res);
 		}
@@ -129,24 +167,24 @@ app.get("/channel/:channelId/videos", function (req, res) {
 
 // Redirection route to get to player or playlist player from index page, this was done to make the url cleaner
 // and to prevent sending a url which will cause the app not to find the page from the index page forms
-app.get("/redirection/", function (req, res) {
+app.get('/redirection/', (req, res) => {
 	if (req.query.videoQuery) {
 		let videoId = videoIdParser(req.query.videoQuery);
-		res.redirect("/playSong?id=" + videoId);
+		res.redirect('/playSong?id=' + videoId);
 	} else if (req.query.playlistQuery) {
 		let playlistId = playlistIdParser(req.query.playlistQuery);
-		res.redirect("/playPlaylist?id=" + playlistId);
+		res.redirect('/playPlaylist?id=' + playlistId);
 	}
 });
 
 // Route for pages that don't exist
-app.get("*", function (req, res) {
-	res.render("404");
+app.get('*', (req, res) => {
+	res.render('404');
 });
 
 // Listen on port 3000
-app.listen(3000, function () {
-	console.log("Server has started on port 3000");
+app.listen(3000, () => {
+	console.log('Server has started on port 3000'); // eslint-disable-line
 });
 
 function videoIdParser(query) {
@@ -160,7 +198,7 @@ function videoIdParser(query) {
 }
 
 function playlistIdParser(query) {
-	let reg = new RegExp("[&?]list=([a-z0-9_]+)", "i");
+	let reg = new RegExp('[&?]list=([a-z0-9_]+)', 'i');
 	let match = query.match(reg);
 	// it found the id
 	if (match && match.length === 2) {
@@ -172,5 +210,5 @@ function playlistIdParser(query) {
 
 // If the youtube api returns an error, it redirects user to this page
 function invalidId(res) {
-	res.render("invalid");
+	res.render('invalid');
 }
