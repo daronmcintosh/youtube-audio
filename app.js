@@ -1,22 +1,18 @@
-require('dotenv').config();
 const express = require('express');
-const apiRequest = require('./public/js/apiRequest');
+const apiRequest = require('./apiRequest');
 const moment = require('moment');
 const stream = require('./stream');
 const path = require('path');
-const sassMiddleware = require('node-sass-middleware');
+const lessMiddleware = require('less-middleware');
 
 const app = express();
 
 app.set('view engine', 'ejs');
-app.use(sassMiddleware({
-	/* Options */
-	src: path.join(__dirname, 'public/sass'), // eslint-disable-line
-	dest: path.join(__dirname, 'public/styles'), // eslint-disable-line
-	debug: false,
-	outputStyle: 'compressed',
-	prefix: '/styles'
-}));
+app.use(lessMiddleware(path.join(__dirname, '/public'), // eslint-disable-line
+	{
+		dest: path.join(__dirname, '/public'), // eslint-disable-line
+		debug: true
+	}));
 
 app.use(express.static(__dirname + '/public')); // eslint-disable-line
 
@@ -59,9 +55,9 @@ app.get('/api/play/:videoId', (req, res) => {
 
 			} else {
 				res.writeHead(200, {
+					'Content-Type': 'audio/mpeg',
 					'Content-Length': durationInBytes,
-					'Transfer-Encoding': 'chuncked',
-					'Content-Type': 'audio/mpeg'
+					'Transfer-Encoding': 'chuncked'
 				});
 				stream(requestUrl).pipe(res);
 			}

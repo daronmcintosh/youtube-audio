@@ -1,10 +1,13 @@
-$player-primary-color: red;
-$header-font-size: large;
-$header-color: #000;
-$card-title-color: #000;
-$card-text-color: hsl(0, 0%, 53.3%);
-$player-background-color: #282828;
-$player-controls-color: aliceblue;
+@player-primary-color: red;
+@header-font-size: large;
+@header-color: #000;
+@card-title-color: #000;
+@card-text-color: hsl(0, 0%, 53.3%);
+@player-background-color: #282828;
+@player-controls-color: aliceblue;
+body{
+    background-color: red !important;
+}
 // Navbar
 .form-inline {
     position: absolute;
@@ -19,8 +22,8 @@ $player-controls-color: aliceblue;
 
 // Search and Channel Page
 .header {
-    color: $header-color;
-    font-size: $header-font-size;
+    color: @header-color;
+    font-size: @header-font-size;
 }
 
 .custom-card-search {
@@ -35,7 +38,7 @@ $player-controls-color: aliceblue;
 .card-title {
     width: 100%;
     word-wrap: break-word;
-    color: $card-title-color;
+    color: @card-title-color;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -43,7 +46,7 @@ $player-controls-color: aliceblue;
 }
 
 .card-text {
-    color: $card-text-color;
+    color: @card-text-color;
     font-size: small;
     width: 400px;
     word-wrap: break-word;
@@ -73,7 +76,7 @@ $player-controls-color: aliceblue;
     position: fixed;
     bottom: 0px;
     right: 0px;
-    background-color: $player-background-color;
+    background-color: @player-background-color;
     z-index: 2;
 }
 
@@ -87,17 +90,17 @@ $player-controls-color: aliceblue;
 }
 
 .fas {
-    color: $player-controls-color;
+    color: @player-controls-color;
 }
 
 .plyr--audio .plyr__controls {
-    background-color: $player-background-color;
-    color: $player-controls-color;
+    background-color: @player-background-color;
+    color: @player-controls-color;
 }
 
 .song-info {
     padding-top: 15px;
-    color: $player-controls-color;
+    color: @player-controls-color;
     font-size: 1.2em;
 }
 
