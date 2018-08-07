@@ -4,6 +4,7 @@
   "description": "",
   "main": "app.js",
   "scripts": {
+    "start": "node app.js",
     "test": "node ./test/app.js"
   },
   "author": "Daron McIntosh",
