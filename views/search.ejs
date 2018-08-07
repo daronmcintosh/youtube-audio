@@ -10,22 +10,22 @@
                         <% var imgClass = ""; %>
                         <% if (kind.includes("video")) { %>
                             <% link = "/playSong?id=" + result.id; %>
-                            <% imgClass = "img-fluid rounded w-100"; %>
+                            <% imgClass = "img-fluid rounded"; %>
                         <% } else if (kind.includes("playlist")) { %>
                             <% link = "/playPlaylist?id=" + result.id; %>
-                            <% imgClass = "img-fluid rounded w-100"; %>
+                            <% imgClass = "img-fluid rounded"; %>
                         <% } else { %>
                             <% link = "/channel/" + result.id + "/playlists"; %>
-                            <% imgClass = "img-fluid rounded-circle w-100"; %>
+                            <% imgClass = "img-fluid rounded-circle"; %>
                         <% } %>
                         <% if(result.id.length > 0){ %>
                             <a class="list-group-item custom-card-search" href="<%= link %>">
-                                <div class="card flex-row flex-wrap">
-                                    <div class="card-header border-0 w-25 text-center">
-                                        <img src="<%= result.imgSrc %>" alt="error getting image" class="<%= imgClass %>">
+                                <div class="card flex-row">
+                                    <div class="card-header border-0 text-center">
+                                        <img src="<%= result.imgSrc %>" alt="no image found" class="<%= imgClass %>">
                                     </div>
                                     <div class="card-block px-2">
-                                        <h5 class="card-title">
+                                        <h5 class="card-title card-title-search">
                                             <%= result.title %>
                                         </h5>
                                         <h6 class="mb-2">
@@ -35,7 +35,7 @@
                                                 </a>
                                             <% } %>
                                         </h6>
-                                        <p class="card-text">
+                                        <p class="card-text card-text-search">
                                             <%= result.description %>
                                         </p>
                                     </div>

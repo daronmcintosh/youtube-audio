@@ -7,22 +7,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css">
     <!-- Plyr CSS -->
     <link rel="stylesheet" href="https://cdn.plyr.io/3.3.21/plyr.css">
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.1/css/all.css" integrity="sha384-O8whS3fhG2OnA5Kas0Y9l3cfpmYjapjI0E4theH4iuMD+pLhbf6JI0jIMfYcK3yZ" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.1/css/all.css" integrity="sha384-O8whS3fhG2OnA5Kas0Y9l3cfpmYjapjI0E4theH4iuMD+pLhbf6JI0jIMfYcK3yZ"
+        crossorigin="anonymous">
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="/styles/main.css">
+    <link rel="stylesheet" media='screen and (min-width: 768px)' href="/styles/desktop.css">
+    <link rel="stylesheet" media='screen and (max-width: 768px)' href="/styles/mobile.css">
     <title>Youtube Audio</title>
 </head>
 
 <body>
     <nav class="navbar navbar-light bg-light">
         <a class="navbar-brand" href="/">Youtube Audio</a>
-        <form class="form-inline" action="/results" method="GET">
-            <input class="form-control mr-sm-2" name="searchQuery" type="search" placeholder="Search" aria-label="Search">
-            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+        <a class="fas fa-home" href="/"></a>
+        <form class="form-inline" action="/results" method="GET" id="search-form">
+            <input class="form-control" name="searchQuery" type="search" placeholder="Search" aria-label="Search">
+            <button class="fas fa-search" type="submit"></button>
         </form>
     </nav>
     <div class="container">

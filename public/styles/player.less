@@ -1,0 +1,40 @@
+// Player
+.player-container {
+    width: 100%;
+    height: @desktop-player-height;
+    position: fixed;
+    bottom: 0px;
+    right: 0px;
+    background-color: @player-background-color;
+    z-index: 2;
+    padding: 10px;
+}
+
+.plyr__controls {
+    width: 75%;
+    margin: 0 auto;
+}
+
+.custom-player-controls {
+    text-align: center;
+}
+
+.fa-step-backward,
+.fa-play,
+.fa-pause,
+.fa-step-forward,
+    {
+    color: @player-controls-color;
+}
+
+.plyr--audio .plyr__controls {
+    background-color: @player-background-color;
+    color: @player-controls-color;
+}
+
+.song-info {
+    color: @player-controls-color;
+    font-size: 1.2em;
+    text-align: center;
+    margin-bottom: 5px;
+}

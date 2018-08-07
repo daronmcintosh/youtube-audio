@@ -33,9 +33,6 @@ if (supportsAudio) {
 	/*global Plyr*/
 	new Plyr(audioPlayer, { controls });
 
-	// var heightOfPlayer = document.querySelector('.player-container').clientHeight;
-	// document.querySelector('.list-group').style.marginBottom = heightOfPlayer + 50 + 'px';
-
 	audioPlayer.addEventListener('play', () => {
 		isPlaying = true;
 	});

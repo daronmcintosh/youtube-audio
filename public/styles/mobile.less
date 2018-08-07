@@ -1,0 +1,107 @@
+@import "variables.less";
+@import "./navbar.less";
+@import "./channel.less";
+@import "./search.less";
+@import "./playlist.less";
+@import "./player.less";
+html,
+body {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+//Navbar
+.form-inline {
+    margin: auto;
+}
+
+.fa-home {
+    display: inline-block;
+}
+
+.navbar-brand {
+    display: none;
+}
+
+input[type='search'] {
+    width: auto;
+}
+
+//  Index Page
+.form-group label {
+    font-size: large;
+}
+
+// Channel and Search
+.card {
+    border: none;
+    margin-bottom: 10px;
+}
+
+// Channel Page
+img.card-img-top.img-fluid {
+    width: auto;
+}
+
+// Search Page
+.card-header {
+    margin-right: 10px;
+}
+
+.card-text {
+    display: none;
+}
+
+.card-title-search {
+    font-size: 1em;
+}
+
+.card-text-search {
+    color: @card-text-color;
+    word-wrap: break-word;
+}
+
+.channel-link {
+    font-size: 1em;
+}
+
+img.img-fluid.rounded,
+img.img-fluid.rounded-circle {
+    max-width: @mobile-thumbnail-img-width;
+}
+
+// Player
+.player-container {
+    padding: 0;
+}
+.plyr__control,
+.plyr__volume {
+    display: none;
+}
+
+.plyr__controls {
+    width: 100%;
+}
+
+.song-info {
+    font-size: 1.0em;
+}
+
+// Extra Small Devices
+@media only screen and (max-width: 360px) {
+    .fa-search,
+    .fa-home {
+        padding: .34rem .6rem;
+    }
+    .channel-link,
+    #card-title-search {
+        font-size: .8em;
+    }
+    .fa-step-backward,
+    .fa-play,
+    .fa-pause,
+    .fa-step-forward,
+        {
+        font-size: 1.3em;
+    }
+}
