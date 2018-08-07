@@ -179,8 +179,8 @@ app.get('*', (req, res) => {
 });
 
 // Listen on port 3000
-app.listen(3000, () => {
-	console.log('Server has started on port 3000'); // eslint-disable-line
+app.listen(process.env.PORT || 3000, () => { // eslint-disable-line
+	console.log('Server has started'); // eslint-disable-line
 });
 
 function videoIdParser(query) {
