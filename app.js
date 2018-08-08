@@ -102,6 +102,9 @@ app.get('/api/request/', (req, res) => {
 // Play single song route
 app.get('/playSong', (req, res) => {
 	apiRequest.buildVideo(req.query.id).then((result) => {
+		if(result.duration === 0){
+			return invalidId(res);
+		}
 		let src = result.src;
 		let title = result.title;
 		res.render('player', { src: src, title: title });

@@ -39,6 +39,7 @@ async function buildVideo(videoId) {
 		videoObj.title = result.data.items[0].snippet.title;
 		result.data.items[0].s;
 		videoObj.src = '/api/play/' + videoId;
+		videoObj.duration = moment.duration(result.data.items[0].contentDetails.duration).asSeconds();
 	});
 	return videoObj;
 }
