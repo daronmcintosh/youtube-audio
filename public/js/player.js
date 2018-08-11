@@ -27,6 +27,14 @@ if (supportsAudio) {
 
 	var isPlaying = false;
 
+	audioPlayer.addEventListener('seeking', () => {
+		showPlayIcon();
+	});
+
+	audioPlayer.addEventListener('seeked', () => {
+		isPlaying ? showPauseIcon() : showPlayIcon();
+	});
+
 	audioPlayer.addEventListener('play', () => {
 		isPlaying = true;
 	});
@@ -75,6 +83,7 @@ function playSong() {
 			showPauseIcon();
 		}).catch(error => {
 			if (error) {
+				console.log(error);
 				// alert('There was an error playing. Try clicking play or refreshing');
 			}
 		});

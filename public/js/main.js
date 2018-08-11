@@ -10,3 +10,5 @@ if (document.getElementById('player-page')) {
 	script.src = '/js/player.js';
 	document.body.appendChild(script);
 }
+/*global io*/
+var socket = io(); //eslint-disable-line

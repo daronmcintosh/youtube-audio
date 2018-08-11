@@ -1,22 +1,47 @@
 const express = require('express');
+const app = express();
 const apiRequest = require('./apiRequest');
 const moment = require('moment');
-const stream = require('./stream');
+const ytdl = require('ytdl-core');
 const path = require('path');
 const lessMiddleware = require('less-middleware');
+const helmet = require('helmet');
+const compression = require('compression');
 
-const app = express();
+const ffmpeg = require('fluent-ffmpeg');
+const server = require('http').createServer(app);
+const io = require('socket.io')(server);
+const session = require('express-session')({
+	secret: 'my secret is very secret',
+	resave: true,
+	saveUninitialized: true
+});
+const sharedsession = require('express-socket.io-session');
+app.use(session);
+io.use(sharedsession(session));
 
 app.set('view engine', 'ejs');
+app.use(compression());
+app.use(helmet());
 app.use(lessMiddleware(path.join(__dirname, '/public'), // eslint-disable-line
 	{
 		dest: path.join(__dirname, '/public'), // eslint-disable-line
-		debug: true
+		debug: false
 	}));
-
 app.use(express.static(__dirname + '/public')); // eslint-disable-line
-
 app.locals.moment = moment;
+
+let runningCommands = {}; // used to store ffmpeg process so that they can be killed
+let connectedClients = {}; // used to store connected clients by there sessionID
+io.on('connection', (socket) => {
+	connectedClients[socket.handshake.sessionID] = socket.id;
+	socket.on('disconnect', () => {
+		if (socket.handshake.sessionID in runningCommands) {
+			runningCommands[socket.handshake.sessionID].kill();
+		}
+		delete connectedClients[socket.handshake.sessionID];
+	});
+});
 
 // INDEX PAGE
 app.get('/', (req, res) => {
@@ -26,10 +51,14 @@ app.get('/', (req, res) => {
 // SOURCE URL FOR AUDIO
 app.get('/api/play/:videoId', (req, res) => {
 	let requestUrl = 'http://youtube.com/watch?v=' + req.params.videoId;
+	let audio = ytdl(requestUrl, {
+		quality: 'highestaudio'
+	});
 	try {
 		apiRequest.getDuration(req.params.videoId).then((duration) => {
 			// calculate length in bytes, (((bitrate * (lengthInSeconds)) / bitsToKiloBytes) * kiloBytesToBytes)
-			var durationInBytes = (((125 * (duration)) / 8) * 1024);
+			let contentType = 'audio/mpeg';
+			var durationInBytes = (((128 * (duration)) / 8) * 1024);
 			if (req.headers.range) {
 				let range = req.headers.range;
 				let parts = range.replace(/bytes=/, '').split('-');
@@ -41,7 +70,7 @@ app.get('/api/play/:videoId', (req, res) => {
 
 				let chunksize = (end - start) + 1;
 				res.writeHead(206, {
-					'Content-Type': 'audio/mpeg',
+					'Content-Type': contentType,
 					'Accept-Ranges': 'bytes',
 					'Content-Length': chunksize,
 					'Content-Range': 'bytes ' + start + '-' + end + '/' + durationInBytes
@@ -49,17 +78,31 @@ app.get('/api/play/:videoId', (req, res) => {
 
 				// convert start in bytes to start in seconds
 				// minus one second to prevent content length error
-				let startInSeconds = (start / (1024 * 125) * 8 - 1);
+				let startInSeconds = (start / (1024 * 128) * 8 - 1);
 
-				stream(requestUrl, {}, startInSeconds).pipe(res);
-
+				runningCommands[req.sessionID] = ffmpeg(audio);
+				runningCommands[req.sessionID].audioCodec('libmp3lame')
+					.audioBitrate(128)
+					.format('mp3')
+					.setStartTime(startInSeconds)
+					.on('end', () => {
+						delete runningCommands[req.sessionID];
+					})
+					.on('error', () => {
+						delete runningCommands[req.sessionID];
+					})
+					.pipe(res);
 			} else {
 				res.writeHead(200, {
-					'Content-Type': 'audio/mpeg',
+					'Content-Type': contentType,
 					'Content-Length': durationInBytes,
 					'Transfer-Encoding': 'chuncked'
 				});
-				stream(requestUrl).pipe(res);
+				runningCommands[req.sessionID] = ffmpeg(audio);
+				runningCommands[req.sessionID].audioCodec('libmp3lame')
+					.audioBitrate(128)
+					.format('mp3')
+					.pipe(res);
 			}
 		}).catch((err) => {
 			if (err) {
@@ -102,7 +145,7 @@ app.get('/api/request/', (req, res) => {
 // Play single song route
 app.get('/playSong', (req, res) => {
 	apiRequest.buildVideo(req.query.id).then((result) => {
-		if(result.duration === 0){
+		if (result.duration === 0) {
 			return invalidId(res);
 		}
 		let src = result.src;
@@ -182,7 +225,12 @@ app.get('*', (req, res) => {
 });
 
 // Listen on port 3000
-app.listen(process.env.PORT || 3000, () => { // eslint-disable-line
+var port = process.env.PORT || 3000; // eslint-disable-line
+// app.listen(port, () => { // eslint-disable-line
+// 	console.log('Server has started'); // eslint-disable-line
+// });
+
+server.listen(port, () => { // eslint-disable-line
 	console.log('Server has started'); // eslint-disable-line
 });
 
