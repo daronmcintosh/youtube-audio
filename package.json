@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "preinstall": "npm install pm2 -g",
-    "start": "pm2-runtime app.js -i max",
+    "start": "pm2-runtime app.js",
     "test": "node ./test/app.js"
   },
   "author": "Daron McIntosh",
