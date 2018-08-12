@@ -10,7 +10,7 @@ const express = require('express');
 const app = express();
 
 app.get('/', (req, res) => {
-	res.sendFile(path.join(__dirname + '/index.html')); // eslint-disable-line
+	res.sendFile(path.join(__dirname + '/index.html'));
 });
 
 // SOURCE URL FOR AUDIO
@@ -20,7 +20,7 @@ app.get('/api/play/:videoId', (req, res) => {
 		// using ytdl instead of youtube's api for test
 		ytdl.getInfo(req.params.videoId, (err, info) => {
 			if (err) {
-				console.log(err); // eslint-disable-line
+				console.log(err);
 			} else {
 				// calculate length in bytes, (((bitrate * (lengthInSeconds)) / bitsToKiloBytes) * kiloBytesToBytes)
 				var durationInBytes = (((125 * (info.length_seconds)) / 8) * 1024);

@@ -7,45 +7,52 @@ const path = require('path');
 const lessMiddleware = require('less-middleware');
 const helmet = require('helmet');
 const compression = require('compression');
-
 const ffmpeg = require('fluent-ffmpeg');
 const server = require('http').createServer(app);
 const io = require('socket.io')(server);
 const session = require('express-session')({
-	secret: 'my secret is very secret',
+	secret: process.env.SESSION_SECRET,
 	resave: true,
 	saveUninitialized: true
 });
 const sharedsession = require('express-socket.io-session');
+const { createLogger, format, transports } = require('winston');
+const logger = createLogger({
+	level: 'info',
+	format: format.combine(format.timestamp(), format.json()),
+	transports: [
+		new transports.File({ filename: './logs/error.log', level: 'error' }),
+		new transports.File({ filename: './logs/info.log', level: 'info' })
+	]
+});
+if (process.env.NODE_ENV !== 'production') {
+	logger.add(new transports.Console({
+		format: format.simple()
+	}));
+}
 app.use(session);
 io.use(sharedsession(session));
 
 app.set('view engine', 'ejs');
 app.use(compression());
 app.use(helmet());
-app.use(lessMiddleware(path.join(__dirname, '/public'), // eslint-disable-line
+app.use(lessMiddleware(path.join(__dirname, '/public'),
 	{
-		dest: path.join(__dirname, '/public'), // eslint-disable-line
+		dest: path.join(__dirname, '/public'),
 		debug: false
 	}));
-app.use(express.static(__dirname + '/public')); // eslint-disable-line
+app.use(express.static(__dirname + '/public'));
 app.locals.moment = moment;
 
 let runningCommands = {}; // used to store ffmpeg process so that they can be killed
 let connectedClients = {}; // used to store connected clients by there sessionID
 io.on('connection', (socket) => {
 	connectedClients[socket.handshake.sessionID] = socket.id;
-	console.log('connection');
-	console.log(connectedClients);
-	console.log('--------------------------------');
 	socket.on('disconnect', () => {
 		if (socket.handshake.sessionID in runningCommands) {
 			runningCommands[socket.handshake.sessionID].kill();
 		}
 		delete connectedClients[socket.handshake.sessionID];
-		console.log('disconnect');
-		console.log(connectedClients);
-		console.log('--------------------------------');
 	});
 });
 
@@ -58,18 +65,18 @@ app.get('/', (req, res) => {
 app.get('/api/play/:videoId', (req, res) => {
 	let requestUrl = 'http://youtube.com/watch?v=' + req.params.videoId;
 	let audio;
-	ytdl.getBasicInfo(requestUrl, (err, info) => {
+	ytdl.getInfo(requestUrl, (err, info) => {
 		if (err) {
 			io.to(`${connectedClients[req.sessionID]}`).emit('video error', err.message);
 		} else {
-			audio = ytdl(requestUrl, {
+			audio = ytdl.downloadFromInfo(info, {
 				quality: 'highestaudio'
 			});
 			try {
 				apiRequest.getDuration(req.params.videoId).then((duration) => {
 					// calculate length in bytes, (((bitrate * (lengthInSeconds)) / bitsToKiloBytes) * kiloBytesToBytes)
 					let contentType = 'audio/mpeg';
-					var durationInBytes = (((128 * (duration)) / 8) * 1024);
+					let durationInBytes = (((128 * (duration)) / 8) * 1024);
 					if (req.headers.range) {
 						let range = req.headers.range;
 						let parts = range.replace(/bytes=/, '').split('-');
@@ -126,7 +133,7 @@ app.get('/api/play/:videoId', (req, res) => {
 // API RESPONSE ROUTE
 app.get('/api/request/', (req, res) => {
 	let query = req.query.apiQuery;
-	let videoId = videoIdParser(query);
+	let videoId = ytdl.getVideoID(query);
 	let playlistId = playlistIdParser(query);
 	if (videoId.length == 11) {
 		apiRequest.buildVideo(videoId).then((result) => {
@@ -220,7 +227,7 @@ app.get('/channel/:channelId/videos', (req, res) => {
 // and to prevent sending a url which will cause the app not to find the page from the index page forms
 app.get('/redirection/', (req, res) => {
 	if (req.query.videoQuery) {
-		let videoId = videoIdParser(req.query.videoQuery);
+		let videoId = ytdl.getVideoID(req.query.videoQuery);
 		res.redirect('/playSong?id=' + videoId);
 	} else if (req.query.playlistQuery) {
 		let playlistId = playlistIdParser(req.query.playlistQuery);
@@ -234,24 +241,11 @@ app.get('*', (req, res) => {
 });
 
 // Listen on port 3000
-var port = process.env.PORT || 3000; // eslint-disable-line
-// app.listen(port, () => { // eslint-disable-line
-// 	console.log('Server has started'); // eslint-disable-line
-// });
+let port = process.env.PORT || 3000;
 
-server.listen(port, () => { // eslint-disable-line
-	console.log('Server has started'); // eslint-disable-line
+server.listen(port, () => {
+	logger.info('Server started');
 });
-
-function videoIdParser(query) {
-	let regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/; // eslint-disable-line
-	let match = query.match(regExp);
-	if (match && match[7].length == 11) {
-		return match[7];
-	}
-	// in this case an id was entered, this is really lazy, find a way to validate it
-	return query;
-}
 
 function playlistIdParser(query) {
 	let reg = new RegExp('[&?]list=([a-z0-9_]+)', 'i');

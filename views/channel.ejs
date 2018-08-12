@@ -21,7 +21,7 @@
                 <div class="card-deck">
                     <% var counter = 0; %>
                     <% if(videos !== null){ %>
-                        <% videos.videos.forEach(function(result){ %>
+                        <% videos.videos.forEach((result) =>{ %>
                             <% if(result.id){ %>
                                 <% counter++; %>
                                 <a href="/playSong?id=<%= result.id %>" class="custom-card-channel">
@@ -55,7 +55,7 @@
                             <% } %>
                         <% }) %>
                     <% }else{ %>
-                        <% playlists.playlistsItems.forEach(function(result){ %>
+                        <% playlists.playlistsItems.forEach((result)=>{ %>
                             <% if(result.id){ %>
                                 <% counter++; %>
                                 <a href="/playPlaylist?id=<%= result.id %>" class="custom-card-channel">

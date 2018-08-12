@@ -96,7 +96,7 @@ if (supportsAudio) {
 	});
 
 	for (var i = 0; i < playListItems.length; i++) {
-		playListItems[i].addEventListener('click', function () {
+		playListItems[i].addEventListener('click', () => {
 			index = Number(this.getAttribute('data-index'));
 			loadTrack(index);
 			if (isPlaying) {
@@ -141,8 +141,7 @@ function playSong() {
 			showPauseIcon();
 		}).catch(error => {
 			if (error) {
-				console.log(error);
-				// alert('There was an error playing. Try clicking play or refreshing');
+				// log this error
 			}
 		});
 	}

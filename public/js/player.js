@@ -83,8 +83,7 @@ function playSong() {
 			showPauseIcon();
 		}).catch(error => {
 			if (error) {
-				console.log(error);
-				// alert('There was an error playing. Try clicking play or refreshing');
+				// log this error
 			}
 		});
 	}

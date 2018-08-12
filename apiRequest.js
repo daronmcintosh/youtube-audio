@@ -5,7 +5,7 @@ const moment = require('moment');
 // initialize the Youtube API library
 const youtube = google.youtube({
 	version: 'v3',
-	auth: process.env.API_KEY // eslint-disable-line
+	auth: process.env.API_KEY
 });
 
 
@@ -15,12 +15,12 @@ async function buildPlaylistItems(playlistId) {
 		maxResults: 50,
 		part: 'snippet'
 	});
-	var tracks = [];
-	var trackCounter = 1;
-	var items = result.data.items;
+	let tracks = [];
+	let trackCounter = 1;
+	let items = result.data.items;
 	for (const item of items) {
-		var trackObj = {};
-		var videoId = item.snippet.resourceId.videoId;
+		let trackObj = {};
+		let videoId = item.snippet.resourceId.videoId;
 		trackObj.track = trackCounter;
 		trackObj.name = item.snippet.title;
 		trackObj.src = '/api/play/' + videoId;
@@ -52,10 +52,10 @@ async function buildSearch(query) {
 		part: 'snippet'
 	});
 	let searchResults = [];
-	var items = result.data.items;
+	let items = result.data.items;
 	for (const item of items) {
-		var searchObj = {};
-		var kind = item.id.kind;
+		let searchObj = {};
+		let kind = item.id.kind;
 		searchObj.kind = kind;
 		if (kind === 'youtube#video') {
 			searchObj.id = item.id.videoId;
@@ -86,10 +86,10 @@ async function buildPlaylists(channelId) {
 		name: '',
 		playlistsItems: []
 	};
-	var items = result.data.items;
+	let items = result.data.items;
 	if (items.length > 0) {
 		for (const item of items) {
-			var playlistObj = {};
+			let playlistObj = {};
 			playlistObj.id = item.id;
 			playlistObj.title = item.snippet.title;
 			playlistObj.imgSrc = item.snippet.thumbnails.high.url;
@@ -112,9 +112,9 @@ async function buildPopularVideos(channelId) {
 		videos: []
 	};
 	channelObj.name = result.data.items[0].snippet.channelTitle;
-	var items = result.data.items;
+	let items = result.data.items;
 	for (const item of items) {
-		var videoObj = {};
+		let videoObj = {};
 		videoObj.id = item.id.videoId;
 		videoObj.title = item.snippet.title;
 		videoObj.imgSrc = item.snippet.thumbnails.high.url;
@@ -124,11 +124,11 @@ async function buildPopularVideos(channelId) {
 }
 
 async function getDuration(videoId) {
-	var duration = 0;
+	let duration = 0;
 	await youtube.videos.list({
 		id: videoId,
 		part: 'contentDetails'
-	}).then(function (result) {
+	}).then((result) => {
 		duration = moment.duration(result.data.items[0].contentDetails.duration).asSeconds();
 	});
 	return duration;

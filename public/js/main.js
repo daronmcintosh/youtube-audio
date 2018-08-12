@@ -1,5 +1,5 @@
 /*global io*/
-var socket = io(); //eslint-disable-line
+var socket = io();
 
 // Add Playlist Script for Playlist Page
 if (document.getElementById('mainwrap')) {
