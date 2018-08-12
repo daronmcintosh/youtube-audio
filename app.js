@@ -47,6 +47,7 @@ io.on('connection', (socket) => {
 			runningCommands[socket.handshake.sessionID].kill();
 		}
 		delete connectedClients[socket.handshake.sessionID];
+		logger.info(`Number of clients: ${Object.keys(connectedClients).length}`);
 	});
 });
 
