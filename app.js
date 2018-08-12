@@ -76,7 +76,7 @@ app.get('/api/play/:videoId', (req, res) => {
 				apiRequest.getDuration(req.params.videoId).then((duration) => {
 					// calculate length in bytes, (((bitrate * (lengthInSeconds)) / bitsToKiloBytes) * kiloBytesToBytes)
 					let contentType = 'audio/mpeg';
-					let durationInBytes = (((128 * (duration)) / 8) * 1024);
+					let durationInBytes = (((125 * (duration)) / 8) * 1024);
 					if (req.headers.range) {
 						let range = req.headers.range;
 						let parts = range.replace(/bytes=/, '').split('-');
@@ -96,7 +96,7 @@ app.get('/api/play/:videoId', (req, res) => {
 
 						// convert start in bytes to start in seconds
 						// minus one second to prevent content length error
-						let startInSeconds = (start / (1024 * 128) * 8 - 1);
+						let startInSeconds = (start / (1024 * 125) * 8 - 1);
 
 						runningCommands[req.sessionID] = ffmpeg(audio);
 						runningCommands[req.sessionID].audioCodec('libmp3lame')
