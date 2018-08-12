@@ -1,29 +1,48 @@
 <% include ./partials/header %>
 	<div class="row justify-content-center">
-		<div class="col-lg-8">
-			<form action="/api/request" method="GET">
-				<div class="form-group">
-					<label for="apiQuery">Make API Request</label>
-					<input class="form-control" type="text" name="apiQuery" id="apiQuery" required>
-				</div>
-				<button type="submit" class="btn btn-primary">Request</button>
-			</form>
+		<div class="col-lg-10">
+			<h5 class="header">United States Trending</h5>
 			<hr>
-			<form action="/redirection" method="GET">
-				<div class="form-group">
-					<label  for="videoQuery">Youtube Video Id or URL</label>
-					<input class="form-control" id="videoQuery" name="videoQuery" required>
+			<div class="container">
+				<div class="card-deck">
+					<% var counter = 0; %>
+					<% if(videos !== null){ %>
+						<% videos.forEach((result) =>{ %>
+							<% if(result.id){ %>
+								<% counter++; %>
+								<a href="/playSong?id=<%= result.id %>" class="custom-card-channel">
+									<div class="card mb-4">
+										<img src="<%= result.imgSrc %>" alt="no image found" class="card-img-top img-fluid">
+										<div class="card-body">
+											<h5 class="card-title card-title-channel"><%= result.title %></h5>
+										</div>
+									</div>
+								</a>
+								<% if(counter % 2 === 0){ %>
+									<div class="w-100 d-none d-sm-block d-md-none">
+											<!-- wrap every 2 on sm-->
+									</div>
+								<% } %>
+								<% if(counter % 3 === 0){ %>
+									<div class="w-100 d-none d-md-block d-lg-none">
+											<!-- wrap every 3 on md-->
+									</div>
+								<% } %>
+								<% if(counter% 4 === 0){ %>
+									<div class="w-100 d-none d-lg-block d-xl-none">
+											<!-- wrap every 4 on lg-->
+									</div>
+								<% } %>
+								<% if(counter % 5 === 0){ %>
+									<div class="w-100 d-none d-xl-block">
+											<!-- wrap every 5 on xl-->
+									</div>
+								<% } %>
+							<% } %>
+						<% }) %>
+					<% } %>
 				</div>
-				<button type="submit" class="btn btn-primary">Play Song</button>
-			</form>
-			<hr>
-			<form action="/redirection" method="GET">
-				<div class="form-group">
-					<label class="mx-sm-2" for="playlistQuery">Playlist Id or URL</label>
-					<input class="form-control" id="playlistQuery" name="playlistQuery" required>
-				</div>
-				<button type="submit" class="btn btn-primary">Play Playlist</button>
-			</form>
+			</div>
 		</div>
 	</div>
 

@@ -48,6 +48,7 @@ let runningCommands = {}; // used to store ffmpeg process so that they can be ki
 let connectedClients = {}; // used to store connected clients by there sessionID
 io.on('connection', (socket) => {
 	connectedClients[socket.handshake.sessionID] = socket.id;
+	logger.info(`Number of clients: ${Object.keys(connectedClients).length}`);
 	socket.on('disconnect', () => {
 		if (socket.handshake.sessionID in runningCommands) {
 			runningCommands[socket.handshake.sessionID].kill();
@@ -58,7 +59,14 @@ io.on('connection', (socket) => {
 
 // INDEX PAGE
 app.get('/', (req, res) => {
-	res.render('index');
+	apiRequest.buildTrendingVideos().then((videos) => {
+		res.render('index', { videos: videos});
+	}).catch((err) => {
+		if (err) {
+			logger.error(`Index Page: ${err}`);
+			invalidId(res);
+		}
+	});
 });
 
 // SOURCE URL FOR AUDIO
@@ -67,6 +75,7 @@ app.get('/api/play/:videoId', (req, res) => {
 	let audio;
 	ytdl.getInfo(requestUrl, (err, info) => {
 		if (err) {
+			logger.error(`ytdl error: ${err.message}`);
 			io.to(`${connectedClients[req.sessionID]}`).emit('video error', err.message);
 		} else {
 			audio = ytdl.downloadFromInfo(info, {
@@ -106,7 +115,8 @@ app.get('/api/play/:videoId', (req, res) => {
 							.on('end', () => {
 								delete runningCommands[req.sessionID];
 							})
-							.on('error', () => {
+							.on('error', (err) => {
+								logger.error(`ffmpeg: ${err.message}`);
 								delete runningCommands[req.sessionID];
 							})
 							.pipe(res);
@@ -142,6 +152,7 @@ app.get('/api/request/', (req, res) => {
 			res.end();
 		}).catch((err) => {
 			if (err) {
+				logger.error(`API Request: ${err}`);
 				invalidId(res);
 			}
 		});
@@ -152,6 +163,7 @@ app.get('/api/request/', (req, res) => {
 			res.end();
 		}).catch((err) => {
 			if (err) {
+				logger.error(`API Request: ${err}`);
 				invalidId(res);
 			}
 		});
@@ -169,6 +181,7 @@ app.get('/playSong', (req, res) => {
 		res.render('player', { src: src, title: title });
 	}).catch((err) => {
 		if (err) {
+			logger.error(`Player Page: ${err}`);
 			invalidId(res);
 		}
 	});
@@ -180,6 +193,7 @@ app.get('/playPlaylist', (req, res) => {
 		res.render('playlist', { playlistItems: playlistItems });
 	}).catch((err) => {
 		if (err) {
+			logger.error(`Playlist Page: ${err}`);
 			invalidId(res);
 		}
 	});
@@ -191,6 +205,7 @@ app.get('/results/', (req, res) => {
 		res.render('search', { searchResults: searchResults });
 	}).catch((err) => {
 		if (err) {
+			logger.error(`Search Page: ${err}`);
 			invalidId(res);
 		}
 	});
@@ -207,6 +222,7 @@ app.get('/channel/:channelId/playlists', (req, res) => {
 		res.render('channel', { playlists: playlists, videos: null });
 	}).catch((err) => {
 		if (err) {
+			logger.error(`Channel's Playlists Page: ${err}`);
 			invalidId(res);
 		}
 	});
@@ -218,6 +234,7 @@ app.get('/channel/:channelId/videos', (req, res) => {
 		res.render('channel', { videos: videos, playlists: null });
 	}).catch((err) => {
 		if (err) {
+			logger.error(`Channel's Videos Page: ${err}`);
 			invalidId(res);
 		}
 	});

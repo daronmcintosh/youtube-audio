@@ -69,7 +69,13 @@ async function buildSearch(query) {
 		searchObj.channelId = item.snippet.channelId;
 		searchObj.title = item.snippet.title;
 		searchObj.channelTitle = item.snippet.channelTitle;
-		searchObj.imgSrc = item.snippet.thumbnails.high.url;
+		let imageUrl;
+		try {
+			imageUrl = item.snippet.thumbnails.maxres.url;
+		} catch (err) {
+			imageUrl = item.snippet.thumbnails.high.url;
+		}
+		searchObj.imgSrc = imageUrl;
 		searchObj.description = item.snippet.description;
 		searchResults.push(searchObj);
 	}
@@ -92,7 +98,13 @@ async function buildPlaylists(channelId) {
 			let playlistObj = {};
 			playlistObj.id = item.id;
 			playlistObj.title = item.snippet.title;
-			playlistObj.imgSrc = item.snippet.thumbnails.high.url;
+			let imageUrl;
+			try {
+				imageUrl = item.snippet.thumbnails.maxres.url;
+			} catch (err) {
+				imageUrl = item.snippet.thumbnails.high.url;
+			}
+			playlistObj.imgSrc = imageUrl;
 			channelObj.playlistsItems.push(playlistObj);
 		}
 		channelObj.name = result.data.items[0].snippet.channelTitle;
@@ -117,10 +129,41 @@ async function buildPopularVideos(channelId) {
 		let videoObj = {};
 		videoObj.id = item.id.videoId;
 		videoObj.title = item.snippet.title;
-		videoObj.imgSrc = item.snippet.thumbnails.high.url;
+		let imageUrl;
+		try {
+			imageUrl = item.snippet.thumbnails.maxres.url;
+		} catch (err) {
+			imageUrl = item.snippet.thumbnails.high.url;
+		}
+		videoObj.imgSrc = imageUrl;
 		channelObj.videos.push(videoObj);
 	}
 	return channelObj;
+}
+async function buildTrendingVideos() {
+	const result = await youtube.videos.list({
+		part: 'snippet',
+		videoCategoryId: '10',
+		chart: 'mostPopular',
+		regionCode: 'US',
+		maxResults: 25
+	});
+	let videos = [];
+	let items = result.data.items;
+	for (const item of items) {
+		let videoObj = {};
+		videoObj.id = item.id;
+		videoObj.title = item.snippet.title;
+		let imageUrl;
+		try {
+			imageUrl = item.snippet.thumbnails.maxres.url;
+		} catch (err) {
+			imageUrl = item.snippet.thumbnails.high.url;
+		}
+		videoObj.imgSrc = imageUrl;
+		videos.push(videoObj);
+	}
+	return videos;
 }
 
 async function getDuration(videoId) {
@@ -139,4 +182,5 @@ module.exports.buildVideo = buildVideo;
 module.exports.buildSearch = buildSearch;
 module.exports.buildPlaylists = buildPlaylists;
 module.exports.buildPopularVideos = buildPopularVideos;
+module.exports.buildTrendingVideos = buildTrendingVideos;
 module.exports.getDuration = getDuration;
