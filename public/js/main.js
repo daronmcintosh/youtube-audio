@@ -1,3 +1,6 @@
+/*global io*/
+var socket = io(); //eslint-disable-line
+
 // Add Playlist Script for Playlist Page
 if (document.getElementById('mainwrap')) {
 	let script = document.createElement('script');
@@ -10,5 +13,11 @@ if (document.getElementById('player-page')) {
 	script.src = '/js/player.js';
 	document.body.appendChild(script);
 }
-/*global io*/
-var socket = io(); //eslint-disable-line
+let errorMessage = document.querySelector('.alert-warning');
+socket.on('video error', (message) => {
+	errorMessage.style.display = 'block';
+	errorMessage.textContent = message;
+	setTimeout(() => {
+		errorMessage.style.display = 'none';
+	}, 10000);
+});
