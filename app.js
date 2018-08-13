@@ -77,61 +77,70 @@ app.get('/api/play/:videoId', (req, res) => {
 			});
 			try {
 				apiRequest.getDuration(req.params.videoId).then((duration) => {
-					// calculate length in bytes, (((bitrate * (lengthInSeconds)) / bitsToKiloBytes) * kiloBytesToBytes)
-					let contentType = 'audio/mpeg';
-					let durationInBytes = (((125 * (duration)) / 8) * 1024);
-					if (req.headers.range) {
-						let range = req.headers.range;
-						let parts = range.replace(/bytes=/, '').split('-');
-						let partialstart = parts[0];
-						let partialend = parts[1];
-
-						let start = parseInt(partialstart, 10);
-						let end = partialend ? parseInt(partialend, 10) : durationInBytes - 1;
-
-						let chunksize = (end - start) + 1;
-						res.writeHead(206, {
-							'Content-Type': contentType,
-							'Accept-Ranges': 'bytes',
-							'Content-Length': chunksize,
-							'Content-Range': 'bytes ' + start + '-' + end + '/' + durationInBytes
-						});
-
-						// convert start in bytes to start in seconds
-						// minus one second to prevent content length error
-						let startInSeconds = (start / (1024 * 125) * 8 - 1);
-
-						runningCommands[req.sessionID] = ffmpeg(audio);
-						runningCommands[req.sessionID].audioCodec('libmp3lame')
+					if (duration === 0) {
+						let liveStreamURL = ytdl.chooseFormat(info.formats, {quality: 'highestaudio'}).url;
+						ffmpeg(liveStreamURL)
 							.audioBitrate(128)
 							.format('mp3')
-							.setStartTime(startInSeconds)
-							.on('end', () => {
-								delete runningCommands[req.sessionID];
-							})
-							.on('error', (err) => {
-								logger.error(`ffmpeg: ${err.message}`);
-								delete runningCommands[req.sessionID];
-							})
 							.pipe(res);
 					} else {
-						res.writeHead(200, {
-							'Content-Type': contentType,
-							'Content-Length': durationInBytes,
-							'Transfer-Encoding': 'chuncked'
-						});
-						runningCommands[req.sessionID] = ffmpeg(audio);
-						runningCommands[req.sessionID].audioCodec('libmp3lame')
-							.audioBitrate(128)
-							.format('mp3')
-							.on('end', () => {
-								delete runningCommands[req.sessionID];
-							})
-							.on('error', (err) => {
-								logger.error(`ffmpeg: ${err.message}`);
-								delete runningCommands[req.sessionID];
-							})
-							.pipe(res);
+						let contentType = 'audio/mpeg';
+						// calculate length in bytes, (((bitrate * (lengthInSeconds)) / bitsToKiloBytes) * kiloBytesToBytes)
+						// using 125 instead of 128 because it is more accurate
+						let durationInBytes = (((125 * (duration)) / 8) * 1024);
+						if (req.headers.range) {
+							let range = req.headers.range;
+							let parts = range.replace(/bytes=/, '').split('-');
+							let partialstart = parts[0];
+							let partialend = parts[1];
+
+							let start = parseInt(partialstart, 10);
+							let end = partialend ? parseInt(partialend, 10) : durationInBytes - 1;
+
+							let chunksize = (end - start) + 1;
+							res.writeHead(206, {
+								'Content-Type': contentType,
+								'Accept-Ranges': 'bytes',
+								'Content-Length': chunksize,
+								'Content-Range': 'bytes ' + start + '-' + end + '/' + durationInBytes
+							});
+
+							// convert start in bytes to start in seconds
+							// minus one second to prevent content length error
+							let startInSeconds = (start / (1024 * 125) * 8 - 1);
+
+							runningCommands[req.sessionID] = ffmpeg(audio);
+							runningCommands[req.sessionID].audioCodec('libmp3lame')
+								.audioBitrate(128)
+								.format('mp3')
+								.setStartTime(startInSeconds)
+								.on('end', () => {
+									delete runningCommands[req.sessionID];
+								})
+								.on('error', (err) => {
+									logger.error(`ffmpeg: ${err.message}`);
+									delete runningCommands[req.sessionID];
+								})
+								.pipe(res);
+						} else {
+							res.writeHead(200, {
+								'Content-Type': contentType,
+								'Content-Length': durationInBytes,
+								'Transfer-Encoding': 'chuncked'
+							});
+							runningCommands[req.sessionID] = ffmpeg(audio);
+							runningCommands[req.sessionID].audioCodec('libmp3lame')
+								.audioBitrate(128)
+								.format('mp3')
+								.on('end', () => {
+									delete runningCommands[req.sessionID];
+								})
+								.on('error', (err) => {
+									logger.error(`ffmpeg: ${err.message}`);
+									delete runningCommands[req.sessionID];
+								})
+								.pipe(res);
+						}
 					}
 				});
 			} catch (exception) {
@@ -174,9 +183,9 @@ app.get('/api/request/', (req, res) => {
 // Play single song route
 app.get('/playSong', (req, res) => {
 	apiRequest.buildVideo(req.query.id).then((result) => {
-		if (result.duration === 0) {
-			return invalidId(res);
-		}
+		// if (result.duration === 0) {
+		// 	return invalidId(res);
+		// }
 		let src = result.src;
 		let title = result.title;
 		res.render('player', { src: src, title: title });
