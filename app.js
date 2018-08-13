@@ -124,6 +124,13 @@ app.get('/api/play/:videoId', (req, res) => {
 						runningCommands[req.sessionID].audioCodec('libmp3lame')
 							.audioBitrate(128)
 							.format('mp3')
+							.on('end', () => {
+								delete runningCommands[req.sessionID];
+							})
+							.on('error', (err) => {
+								logger.error(`ffmpeg: ${err.message}`);
+								delete runningCommands[req.sessionID];
+							})
 							.pipe(res);
 					}
 				});
