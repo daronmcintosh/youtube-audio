@@ -24,7 +24,7 @@ app.get('/api/play/:videoId', (req, res) => {
 			logger.error(`ytdl error: ${err.message}`);
 		} else {
 			audio = ytdl.downloadFromInfo(info, {
-				quality: 'highestaudio'
+				filter: format => { return format.container === 'm4a' && !format.encoding; }
 			});
 			try {
 				apiRequest.getDuration(req.params.videoId).then((duration) => {

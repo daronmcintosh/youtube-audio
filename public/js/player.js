@@ -37,10 +37,12 @@ if (supportsAudio) {
 
 	audioPlayer.addEventListener('play', () => {
 		isPlaying = true;
+		showPauseIcon();
 	});
 
 	audioPlayer.addEventListener('pause', () => {
 		isPlaying = false;
+		showPlayIcon();
 	});
 
 	audioPlayer.addEventListener('ended', ()=>{

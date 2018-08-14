@@ -73,12 +73,12 @@ app.get('/api/play/:videoId', (req, res) => {
 			io.to(`${connectedClients[req.sessionID]}`).emit('video error', err.message);
 		} else {
 			audio = ytdl.downloadFromInfo(info, {
-				quality: 'highestaudio'
+				filter: format => { return format.container === 'm4a' && !format.encoding; }
 			});
 			try {
 				apiRequest.getDuration(req.params.videoId).then((duration) => {
 					if (duration === 0) {
-						let liveStreamURL = ytdl.chooseFormat(info.formats, {quality: 'highestaudio'}).url;
+						let liveStreamURL = ytdl.chooseFormat(info.formats, { filter: format => { return format.container === 'm4a' && !format.encoding; }}).url;
 						ffmpeg(liveStreamURL)
 							.audioBitrate(128)
 							.format('mp3')
