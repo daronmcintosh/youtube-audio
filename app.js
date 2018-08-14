@@ -78,7 +78,7 @@ app.get('/api/play/:videoId', (req, res) => {
 			try {
 				apiRequest.getDuration(req.params.videoId).then((duration) => {
 					if (duration === 0) {
-						let liveStreamURL = ytdl.chooseFormat(info.formats, { filter: format => { return format.container === 'm4a' && !format.encoding; }}).url;
+						let liveStreamURL = ytdl.chooseFormat(info.formats, { quality: 'highestaudio'}).url;
 						ffmpeg(liveStreamURL)
 							.audioBitrate(128)
 							.format('mp3')
