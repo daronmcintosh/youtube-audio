@@ -123,23 +123,26 @@ async function buildPopularVideos(channelId) {
 		name: '',
 		videos: []
 	};
-	channelObj.name = result.data.items[0].snippet.channelTitle;
 	let items = result.data.items;
-	for (const item of items) {
-		let videoObj = {};
-		videoObj.id = item.id.videoId;
-		videoObj.title = item.snippet.title;
-		let imageUrl;
-		try {
-			imageUrl = item.snippet.thumbnails.maxres.url;
-		} catch (err) {
-			imageUrl = item.snippet.thumbnails.high.url;
+	if (items.length > 0) {
+		for (const item of items) {
+			let videoObj = {};
+			videoObj.id = item.id.videoId;
+			videoObj.title = item.snippet.title;
+			let imageUrl;
+			try {
+				imageUrl = item.snippet.thumbnails.maxres.url;
+			} catch (err) {
+				imageUrl = item.snippet.thumbnails.high.url;
+			}
+			videoObj.imgSrc = imageUrl;
+			channelObj.videos.push(videoObj);
 		}
-		videoObj.imgSrc = imageUrl;
-		channelObj.videos.push(videoObj);
+		channelObj.name = result.data.items[0].snippet.channelTitle;
 	}
 	return channelObj;
 }
+
 async function buildTrendingVideos() {
 	const result = await youtube.videos.list({
 		part: 'snippet',

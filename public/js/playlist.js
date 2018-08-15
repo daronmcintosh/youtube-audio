@@ -97,7 +97,7 @@ if (supportsAudio) {
 
 	playListItems.forEach(playListItem => {
 		playListItem.addEventListener('click', () => {
-			index = Number(playListItem.getAttribute('data-index')); //todo: fix this
+			index = Number(playListItem.getAttribute('data-index'));
 			loadTrack(index);
 			if (isPlaying) {
 				playSong();
