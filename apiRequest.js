@@ -2,14 +2,16 @@ require('dotenv').config();
 const { google } = require('googleapis');
 const moment = require('moment');
 
-// initialize the Youtube API library
-const youtube = google.youtube({
+// Make request to Youtube API with the server side API KEY
+// NB: Private and unlisted videos/playlists won't show when using this.
+const youtubeApiKey = google.youtube({
 	version: 'v3',
 	auth: process.env.API_KEY
 });
 
 
-async function buildPlaylistItems(playlistId) {
+async function buildPlaylistItems(playlistId, youtubeOAuth2) {
+	let youtube = getYoutubeRequestMethod(youtubeOAuth2);
 	const result = await youtube.playlistItems.list({
 		playlistId: playlistId,
 		maxResults: 50,
@@ -30,7 +32,8 @@ async function buildPlaylistItems(playlistId) {
 	return tracks;
 }
 
-async function buildVideo(videoId) {
+async function buildVideo(videoId, youtubeOAuth2) {
+	let youtube = getYoutubeRequestMethod(youtubeOAuth2);
 	let videoObj = {};
 	await youtube.videos.list({
 		id: videoId,
@@ -44,7 +47,8 @@ async function buildVideo(videoId) {
 	return videoObj;
 }
 
-async function buildSearch(query) {
+async function buildSearch(query, youtubeOAuth2) {
+	let youtube = getYoutubeRequestMethod(youtubeOAuth2);
 	const result = await youtube.search.list({
 		type: '',
 		q: query,
@@ -82,7 +86,8 @@ async function buildSearch(query) {
 	return searchResults;
 }
 
-async function buildPlaylists(channelId) {
+async function buildPlaylists(channelId, youtubeOAuth2) {
+	let youtube = getYoutubeRequestMethod(youtubeOAuth2);
 	const result = await youtube.playlists.list({
 		maxResults: 24,
 		channelId: channelId,
@@ -112,7 +117,8 @@ async function buildPlaylists(channelId) {
 	return channelObj;
 }
 
-async function buildPopularVideos(channelId) {
+async function buildPopularVideos(channelId, youtubeOAuth2) {
+	let youtube = getYoutubeRequestMethod(youtubeOAuth2);
 	const result = await youtube.search.list({
 		part: 'snippet',
 		channelId: channelId,
@@ -144,7 +150,7 @@ async function buildPopularVideos(channelId) {
 }
 
 async function buildTrendingVideos() {
-	const result = await youtube.videos.list({
+	const result = await youtubeApiKey.videos.list({
 		part: 'snippet',
 		videoCategoryId: '10',
 		chart: 'mostPopular',
@@ -169,7 +175,8 @@ async function buildTrendingVideos() {
 	return videos;
 }
 
-async function getDuration(videoId) {
+async function getDuration(videoId, youtubeOAuth2) {
+	let youtube = getYoutubeRequestMethod(youtubeOAuth2);
 	let duration = 0;
 	await youtube.videos.list({
 		id: videoId,
@@ -180,6 +187,24 @@ async function getDuration(videoId) {
 	return duration;
 }
 
+async function getUserChannelId(youtubeOAuth2) {
+	let youtube = getYoutubeRequestMethod(youtubeOAuth2);
+	let channelId = 0;
+	await youtube.playlists.list({
+		part: 'snippet',
+		mine: 'true'
+	}).then((result) => {
+		let items = result.data.items;
+		channelId = items[0].snippet.channelId;
+	});
+	return channelId;
+}
+
+function getYoutubeRequestMethod(youtubeOAuth2) {
+	return youtubeOAuth2._options.auth.credentials !== null ? youtubeOAuth2 : youtubeApiKey;
+	// return youtubeOAuth2 !== null && Object.keys(youtubeOAuth2._options.auth.credentials).length !== 0 ? youtubeOAuth2 : youtubeApiKey;
+}
+
 module.exports.buildPlaylistItems = buildPlaylistItems;
 module.exports.buildVideo = buildVideo;
 module.exports.buildSearch = buildSearch;
@@ -187,3 +212,4 @@ module.exports.buildPlaylists = buildPlaylists;
 module.exports.buildPopularVideos = buildPopularVideos;
 module.exports.buildTrendingVideos = buildTrendingVideos;
 module.exports.getDuration = getDuration;
+module.exports.getUserChannelId = getUserChannelId;

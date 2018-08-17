@@ -27,5 +27,10 @@
             <input class="form-control" name="searchQuery" type="search" placeholder="Search" aria-label="Search">
             <button class="fas fa-search" type="submit"></button>
         </form>
+        <% if(authenticated){ %>
+            <a class="fab fa-youtube" href="/channel/<%= channelId %>"><span class="fa-youtube-text"> My Channel</span></a>
+        <% }else{ %>
+            <a class="fab fa-youtube" href="/authenticate"><span class="fa-youtube-text"> Authenticate</span></a>
+        <% } %>
     </nav>
     <div class="container">

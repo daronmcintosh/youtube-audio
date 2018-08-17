@@ -35,17 +35,19 @@ if (supportsAudio) {
 		isPlaying ? showPauseIcon() : showPlayIcon();
 	});
 
+	audioPlayer.addEventListener('playing', () => {
+		showPauseIcon();
+	});
+
 	audioPlayer.addEventListener('play', () => {
 		isPlaying = true;
-		showPauseIcon();
 	});
 
 	audioPlayer.addEventListener('pause', () => {
 		isPlaying = false;
-		showPlayIcon();
 	});
 
-	audioPlayer.addEventListener('ended', ()=>{
+	audioPlayer.addEventListener('ended', () => {
 		isPlaying = false;
 		audioPlayer.currentTime = 0;
 		showPlayIcon();
@@ -86,6 +88,7 @@ function playSong() {
 		}).catch(error => {
 			if (error) {
 				// log this error
+				console.log(error);
 			}
 		});
 	}

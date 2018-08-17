@@ -41,6 +41,10 @@ if (supportsAudio) {
 		isPlaying ? showPauseIcon() : showPlayIcon();
 	});
 
+	audioPlayer.addEventListener('playing', () => {
+		showPauseIcon();
+	});
+
 	audioPlayer.addEventListener('play', () => {
 		isPlaying = true;
 	});
@@ -142,6 +146,7 @@ function playSong() {
 		}).catch(error => {
 			if (error) {
 				// log this error
+				console.log(error);
 			}
 		});
 	}
