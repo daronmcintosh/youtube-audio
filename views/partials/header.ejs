@@ -28,7 +28,7 @@
             <button class="fas fa-search" type="submit"></button>
         </form>
         <% if(authenticated){ %>
-            <a class="fab fa-youtube" href="/channel/<%= channelId %>"><span class="fa-youtube-text"> My Channel</span></a>
+            <a class="fab fa-youtube" href="/channel/<%= channelId %>/playlists"><span class="fa-youtube-text"> My Channel</span></a>
         <% }else{ %>
             <a class="fab fa-youtube" href="/authenticate"><span class="fa-youtube-text"> Authenticate</span></a>
         <% } %>
