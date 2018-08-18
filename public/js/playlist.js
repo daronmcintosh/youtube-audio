@@ -106,6 +106,7 @@ if (supportsAudio) {
 
 	playListItems.forEach(playListItem => {
 		playListItem.addEventListener('click', () => {
+			socket.emit('remove all processes');
 			index = Number(playListItem.getAttribute('data-index'));
 			loadTrack(index);
 			if (isPlaying) {

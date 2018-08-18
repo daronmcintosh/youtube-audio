@@ -202,8 +202,10 @@ app.get('/api/play/:videoId', (req, res) => {
 				let streamObj = stream(requestUrl, {}, startInSeconds);
 				streamObj.stream.pipe(res);
 				setTimeout(() => {
-					runningCommands[req.sessionID].push(streamObj.ffmpeg);
-				}, 2000);
+					if (streamObj.ffmpeg !== undefined) {
+						runningCommands[req.sessionID].push(streamObj.ffmpeg);
+					}
+				}, 200);
 			} else {
 				res.writeHead(200, {
 					'Content-Type': contentType,
@@ -213,8 +215,10 @@ app.get('/api/play/:videoId', (req, res) => {
 				let streamObj = stream(requestUrl);
 				streamObj.stream.pipe(res);
 				setTimeout(() => {
-					runningCommands[req.sessionID].push(streamObj.ffmpeg);
-				}, 2000);
+					if (streamObj.ffmpeg !== undefined) {
+						runningCommands[req.sessionID].push(streamObj.ffmpeg);
+					}
+				}, 200);
 			}
 		}
 	}).catch((err) => {
