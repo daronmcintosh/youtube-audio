@@ -115,7 +115,7 @@ io.on('connection', (socket) => {
 		if (listOfMyRunningCommands !== undefined) {
 			listOfMyRunningCommands.forEach((command) => {
 				command.on('error', () => {
-					logger.info('A ffmpeg has been has been killed');
+					logger.info('A ffmpeg process has been has been killed');
 				});
 				command.kill();
 			});
@@ -126,6 +126,21 @@ io.on('connection', (socket) => {
 		}
 		delete connectedClients[socket.handshake.sessionID];
 		logger.info(`Number of connected clients: ${Object.keys(connectedClients).length}`);
+	});
+
+	socket.on('remove all processes', () => {
+		let listOfMyRunningCommands = runningCommands[socket.handshake.sessionID];
+		if (listOfMyRunningCommands !== undefined) {
+			let length = listOfMyRunningCommands.length;
+			for (let i = 0; i < length; i++) {
+				listOfMyRunningCommands[i].on('error', () => {
+					logger.info('A ffmpeg process has been has been killed');
+				});
+				listOfMyRunningCommands[i].kill();
+			}
+		} else {
+			logger.info('no commands');
+		}
 	});
 });
 

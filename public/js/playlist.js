@@ -1,3 +1,6 @@
+/*global io*/
+var socket = io();
+
 const controls = `
 <div class="plyr__controls">
     <div class="plyr__time plyr__time--current" aria-label="Current time">00:00</div>
@@ -68,6 +71,7 @@ if (supportsAudio) {
 	});
 
 	btnPrev.addEventListener('click', () => {
+		socket.emit('remove all processes');
 		if ((index - 1) > -1) {
 			index--;
 			loadTrack(index);
@@ -86,6 +90,7 @@ if (supportsAudio) {
 	});
 
 	btnNext.addEventListener('click', () => {
+		socket.emit('remove all processes');
 		if ((index + 1) < trackCount) {
 			index++;
 			loadTrack(index);
