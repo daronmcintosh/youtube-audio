@@ -6,7 +6,7 @@
   "scripts": {
     "preinstall": "npm install pm2 -g",
     "start": "pm2-runtime app.js --max-memory-restart 450M",
-    "test": "node ./test/app.js"
+    "example": "node ./example/app.js"
   },
   "author": "Daron McIntosh",
   "license": "ISC",

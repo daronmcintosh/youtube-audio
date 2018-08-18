@@ -159,7 +159,7 @@ app.get('/', (req, res) => {
 
 // SOURCE URL FOR AUDIO
 app.get('/api/play/:videoId', (req, res) => {
-	let requestUrl = 'http://youtube.com/watch?v=' + req.params.videoId;
+	let requestUrl = 'https://www.youtube.com/watch?v=' + req.params.videoId;
 	apiRequest.getDuration(req.params.videoId, youtubeOAuth2).then((duration) => {
 		if (duration === 0) {
 			ytdl.getInfo(requestUrl, (err, info) => {

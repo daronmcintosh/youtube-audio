@@ -1,13 +1,18 @@
-# Youtube Audio
-Audio version of youtube
+# Motivation
+
+I wanted to listen to just audio on youtube on any device without having to watch the video.
+
+# About
+This is essentially an audio version of youtube. The basics of it is that the video stream is taken from youtube then converted to audio and streamed back to the client on the fly. This should work on almost all modern web browsers and devices.
 
 # Built With
 Node.js,
-Express.js, and
+Express.js,
+fluent-ffmpeg and
 EJS as the templating language
 
-# Testing
-This package comes with a simple example for testing. This can be run with the command `npm test`. Please note that it requires that [ffmpeg](http://www.ffmpeg.org/) be installed locally
+# Example
+This package comes with a simple example for demonstration. This can be run with the command `npm run example`. Please note that it requires that [ffmpeg](http://www.ffmpeg.org/) be installed locally
 
 # How is the audio streamed?
 
@@ -20,7 +25,7 @@ This package comes with a simple example for testing. This can be run with the c
 
 1. User clicks on a section of the seek bar
 2. Browser sends request header with a range
-3. Find start and end range (ths is in bytes)
+3. Find start and end range (this is in bytes)
 4. Calculate the chunksize(length to stream in bytes)
 4. Set the partial content header(206) for the requested range of the audio that is being streamed; content-type - audio/mpeg, accept-ranges - bytes, content-length - chunksize and content-range - 'bytes ' + start + '-' + end + '/' + durationInBytes
 5. Calculate the start in seconds using the start in bytes
