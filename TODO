@@ -25,6 +25,7 @@ youtube-audio:
   ✔ use oauth2 to get a user's playlists and videos. save the token(or whatever is used to request) in the localstorage @done(18-08-16 02:04)
   ✔ net::ERR_CONTENT_LENGTH_MISMATCH @done(18-08-17 03:38)
   ✔ find minimum time needed to find ffmpegProc in api play route @done(18-08-17 23:50)
+  ☐ Review authentication
   ☐ Fix all eslint issues
   ☐ Find the issue that prevents the server from starting
   ☐ Update .eslintrc.json
