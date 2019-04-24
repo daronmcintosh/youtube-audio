@@ -60,8 +60,5 @@ typings/
 # next.js build output
 .next
 
-# eslint config file
-.eslintrc.json
-
 # vs code directory
 .vscode

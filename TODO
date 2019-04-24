@@ -25,5 +25,9 @@ youtube-audio:
   ✔ use oauth2 to get a user's playlists and videos. save the token(or whatever is used to request) in the localstorage @done(18-08-16 02:04)
   ✔ net::ERR_CONTENT_LENGTH_MISMATCH @done(18-08-17 03:38)
   ✔ find minimum time needed to find ffmpegProc in api play route @done(18-08-17 23:50)
+  ☐ Fix all eslint issues
+  ☐ Find the issue that prevents the server from starting
+  ☐ Update .eslintrc.json
+  ☐ Check to see if dotenv has to be called in every instance it is used
   ☐ find and fix memory leak
   ☐ write mocha(or some other test) for live stream, regular and long videos, playSong, playPlaylist, test should involve searching and selecting

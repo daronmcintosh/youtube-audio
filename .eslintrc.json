@@ -1,0 +1,28 @@
+{
+  "env": {
+    "es6": true,
+    "node": true
+  },
+  "extends": [
+    "eslint:recommended",
+    "google"
+  ],
+  "rules": {
+    "prefer-arrow-callback": "error",
+    "prefer-template": "error",
+    "require-jsdoc": "off",
+    "no-console": "off",
+    "space-before-blocks": [
+      "error",
+      "always"
+    ],
+    "no-whitespace-before-property": "error",
+    "arrow-parens": [
+      "error",
+      "as-needed"
+    ],
+    "arrow-spacing": "error",
+    "new-cap": "off",
+    "max-len": "warn"
+  }
+}
