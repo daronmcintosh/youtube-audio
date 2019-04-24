@@ -19,7 +19,12 @@ const sharedsession = require('express-socket.io-session');
 const { createLogger, format, transports } = require('winston');
 const { google } = require('googleapis');
 const redis = require('redis');
-const client = redis.createClient(process.env.REDISCLOUD_URL, { no_ready_check: true });
+const client = redis.createClient({
+  host: process.env.REDIS_HOST,
+  password: process.env.REDIS_PASSWORD,
+  port: process.env.REDIS_PORT,
+  no_ready_check: true
+});
 const axios = require('axios');
 
 // My Modules
