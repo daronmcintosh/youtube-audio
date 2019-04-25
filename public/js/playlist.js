@@ -1,6 +1,4 @@
-/*global io*/
-var socket = io();
-
+/* eslint-disable max-len*/
 const controls = `
 <div class="plyr__controls">
     <div class="plyr__time plyr__time--current" aria-label="Current time">00:00</div>
@@ -21,149 +19,153 @@ const controls = `
     </div>
 </div>
 `;
+/* eslint-enable max-len*/
+const btnPrev = document.querySelector('#previous-button');
+const btnNext = document.querySelector('#next-button');
+const playPauseBtn = document.querySelector('#play-pause-button');
+const audioPlayer = document.querySelector('#audio-player');
+const playListItems = document.querySelectorAll('#plList li');
+const title = document.querySelector('#song-title');
 
-var supportsAudio = !!document.createElement('audio').canPlayType;
+let isPlaying = false;
+let index = 0;
+
+const supportsAudio = !!document.createElement('audio').canPlayType;
+
 if (supportsAudio) {
-	var btnPrev = document.querySelector('#previous-button');
-	var btnNext = document.querySelector('#next-button');
-	var playPauseBtn = document.querySelector('#play-pause-button');
-	var audioPlayer = document.querySelector('#audio-player');
-	var playListItems = document.querySelectorAll('#plList li');
-	var title = document.querySelector('#song-title');
-	var trackCount = playListItems.length;
-	var isPlaying = false;
-	var index = 0;
-	/*global Plyr*/
-	new Plyr(audioPlayer, { controls });
+  const trackCount = playListItems.length;
 
-	audioPlayer.addEventListener('seeking', () => {
-		showPlayIcon();
-	});
+  /* global Plyr*/
+  new Plyr(audioPlayer, {controls});
 
-	audioPlayer.addEventListener('seeked', () => {
-		isPlaying ? showPauseIcon() : showPlayIcon();
-	});
+  audioPlayer.addEventListener('seeking', () => {
+    showPlayIcon();
+  });
 
-	audioPlayer.addEventListener('playing', () => {
-		showPauseIcon();
-	});
+  audioPlayer.addEventListener('seeked', () => {
+    isPlaying ? showPauseIcon() : showPlayIcon();
+  });
 
-	audioPlayer.addEventListener('play', () => {
-		isPlaying = true;
-	});
+  audioPlayer.addEventListener('playing', () => {
+    showPauseIcon();
+  });
 
-	audioPlayer.addEventListener('pause', () => {
-		isPlaying = false;
-	});
+  audioPlayer.addEventListener('play', () => {
+    isPlaying = true;
+  });
 
-	audioPlayer.addEventListener('ended', () => {
-		if ((index + 1) < trackCount) {
-			index++;
-			loadTrack(index);
-			playSong();
-		} else {
-			isPlaying = false;
-			index = 0;
-			loadTrack(index);
-			audioPlayer.pause();
-			showPlayIcon();
-		}
-	});
+  audioPlayer.addEventListener('pause', () => {
+    isPlaying = false;
+  });
 
-	btnPrev.addEventListener('click', () => {
-		socket.emit('remove all processes');
-		if ((index - 1) > -1) {
-			index--;
-			loadTrack(index);
-			if (isPlaying) {
-				playSong();
-			}
-		} else {
-			index = 0;
-			loadTrack(index);
-			audioPlayer.pause();
-		}
-	});
+  audioPlayer.addEventListener('ended', () => {
+    if ((index + 1) < trackCount) {
+      index++;
+      loadTrack(index);
+      playSong();
+    } else {
+      isPlaying = false;
+      index = 0;
+      loadTrack(index);
+      audioPlayer.pause();
+      showPlayIcon();
+    }
+  });
 
-	playPauseBtn.addEventListener('click', () => {
-		togglePlayPause();
-	});
+  btnPrev.addEventListener('click', () => {
+    socket.emit('remove all processes');
+    if ((index - 1) > -1) {
+      index--;
+      loadTrack(index);
+      if (isPlaying) {
+        playSong();
+      }
+    } else {
+      index = 0;
+      loadTrack(index);
+      audioPlayer.pause();
+    }
+  });
 
-	btnNext.addEventListener('click', () => {
-		socket.emit('remove all processes');
-		if ((index + 1) < trackCount) {
-			index++;
-			loadTrack(index);
-			if (isPlaying) {
-				playSong();
-			}
-		} else {
-			index = 0;
-			loadTrack(index);
-			audioPlayer.pause();
-		}
-	});
+  playPauseBtn.addEventListener('click', () => {
+    togglePlayPause();
+  });
 
-	playListItems.forEach(playListItem => {
-		playListItem.addEventListener('click', () => {
-			socket.emit('remove all processes');
-			index = Number(playListItem.getAttribute('data-index'));
-			loadTrack(index);
-			if (isPlaying) {
-				playSong();
-			}
-		});
-	});
-	// select first track and play
-	loadTrack(0);
-	playSong();
+  btnNext.addEventListener('click', () => {
+    socket.emit('remove all processes');
+    if ((index + 1) < trackCount) {
+      index++;
+      loadTrack(index);
+      if (isPlaying) {
+        playSong();
+      }
+    } else {
+      index = 0;
+      loadTrack(index);
+      audioPlayer.pause();
+    }
+  });
+
+  playListItems.forEach(playListItem => {
+    playListItem.addEventListener('click', () => {
+      socket.emit('remove all processes');
+      index = Number(playListItem.getAttribute('data-index'));
+      loadTrack(index);
+      if (isPlaying) {
+        playSong();
+      }
+    });
+  });
+  // select first track and play
+  loadTrack(0);
+  playSong();
 }
 
 function loadTrack(id) {
-	playListItems.forEach((playListItem, i) => {
-		if (i === id) {
-			playListItem.classList.add('active');
-			title.textContent = playListItem.querySelector('.plTitle').textContent;
-			index = id;
-			audioPlayer.src = playListItem.getAttribute('data-src');
-			togglePlayPause();
-		} else {
-			playListItem.classList.remove('active');
-		}
-	});
+  playListItems.forEach((playListItem, i) => {
+    if (i === id) {
+      playListItem.classList.add('active');
+      title.textContent = playListItem.querySelector('.plTitle').textContent;
+      index = id;
+      audioPlayer.src = playListItem.getAttribute('data-src');
+      togglePlayPause();
+    } else {
+      playListItem.classList.remove('active');
+    }
+  });
 }
 
 function togglePlayPause() {
-	if (isPlaying) {
-		showPlayIcon();
-		audioPlayer.pause();
-	} else {
-		playSong();
-	}
+  if (isPlaying) {
+    showPlayIcon();
+    audioPlayer.pause();
+  } else {
+    playSong();
+  }
 }
 
 function playSong() {
-	// Play returns a promise so we have to handle that promise
-	let playPromise = audioPlayer.play();
+  // Play returns a promise so we have to handle that promise
+  const playPromise = audioPlayer.play();
 
-	if (playPromise !== undefined) {
-		playPromise.then(() => {
-			showPauseIcon();
-		}).catch(error => {
-			if (error) {
-				// log this error
-				console.log(error);
-			}
-		});
-	}
+  if (playPromise !== undefined) {
+    playPromise.then(() => {
+      showPauseIcon();
+    }).catch(error => {
+      if (error) {
+        // log this error
+        console.log(error);
+      }
+    });
+  }
 }
 
 function showPauseIcon() {
-	playPauseBtn.classList.remove('fa-play');
-	playPauseBtn.classList.add('fa-pause');
+  playPauseBtn.classList.remove('fa-play');
+  playPauseBtn.classList.add('fa-pause');
 }
 
 function showPlayIcon() {
-	playPauseBtn.classList.remove('fa-pause');
-	playPauseBtn.classList.add('fa-play');
+  playPauseBtn.classList.remove('fa-pause');
+  playPauseBtn.classList.add('fa-play');
 }

@@ -23,14 +23,19 @@ youtube-audio:
   ✘ fix bug on android chrome where the audio stops if the phone is locked @cancelled(18-08-13 14:51)
   ✔ check to see if pm2 prevents heroku from sleeping @done(18-08-13 23:52)
   ✔ use oauth2 to get a user's playlists and videos. save the token(or whatever is used to request) in the localstorage @done(18-08-16 02:04)
-  ✔ net::ERR_CONTENT_LENGTH_MISMATCH @done(18-08-17 03:38)
   ✔ find minimum time needed to find ffmpegProc in api play route @done(18-08-17 23:50)
-  ☐ Setup a config file
-  ☐ Setup authomatic deploy from github repo and remove heroku repo
+  ✔ Setup a config file @done(19-04-24 19:06)
+  ✔ Setup authomatic deploy from github repo and remove heroku repo @done(19-04-24 19:06)
+  ✔ Extract routes to a routes folder @done(19-04-25 00:01)
+  ✔ Fix all eslint issues @done(19-04-25 00:04)
+  ✔ Update .eslintrc.json @done(19-04-25 00:08)
+  ✔ Check to see if dotenv has to be called in every instance it is used @done(19-04-25 00:08)
+  ☐ Redirect errors in api route to error handler
+  ☐ Failed to load resource: net::ERR_CONTENT_LENGTH_MISMATCH, videoId=ZiADuDjueJc
+  ☐ Inform user that they have to manually click play button cause autoplay failed
+  ☐ Should all the modules that are used in different files be initialized in config.js? Ex: winston's logger
+  ☐ Implement a better playlistid parser
   ☐ Review authentication
-  ☐ Fix all eslint issues
   ☐ Find the issue that prevents the server from starting
-  ☐ Update .eslintrc.json
-  ☐ Check to see if dotenv has to be called in every instance it is used
   ☐ find and fix memory leak
   ☐ write mocha(or some other test) for live stream, regular and long videos, playSong, playPlaylist, test should involve searching and selecting
