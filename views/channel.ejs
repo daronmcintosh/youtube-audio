@@ -24,7 +24,7 @@
                         <% videos.videos.forEach((result) =>{ %>
                             <% if(result.id){ %>
                                 <% counter++; %>
-                                <a href="/playSong?id=<%= result.id %>" class="custom-card-channel">
+                                <a href="/play/song?id=<%= result.id %>" class="custom-card-channel">
                                     <div class="card mb-4">
                                         <img src="<%= result.imgSrc %>" alt="no image found" class="card-img-top img-fluid">
                                         <div class="card-body">
@@ -58,7 +58,7 @@
                         <% playlists.playlistsItems.forEach((result)=>{ %>
                             <% if(result.id){ %>
                                 <% counter++; %>
-                                <a href="/playPlaylist?id=<%= result.id %>" class="custom-card-channel">
+                                <a href="/play/playlist?id=<%= result.id %>" class="custom-card-channel">
                                     <div class="card mb-4">
                                         <img src="<%= result.imgSrc %>" alt="no image found" class="card-img-top img-fluid">
                                         <div class="card-body">

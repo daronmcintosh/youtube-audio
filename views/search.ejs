@@ -9,10 +9,10 @@
                         <% var link = ""; %>
                         <% var imgClass = ""; %>
                         <% if (kind.includes("video")) { %>
-                            <% link = "/playSong?id=" + result.id; %>
+                            <% link = "/play/song?id=" + result.id; %>
                             <% imgClass = "img-fluid rounded"; %>
                         <% } else if (kind.includes("playlist")) { %>
-                            <% link = "/playPlaylist?id=" + result.id; %>
+                            <% link = "/play/playlist?id=" + result.id; %>
                             <% imgClass = "img-fluid rounded"; %>
                         <% } else { %>
                             <% link = "/channel/" + result.id + "/playlists"; %>
