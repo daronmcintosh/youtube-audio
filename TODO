@@ -30,8 +30,12 @@ youtube-audio:
   ✔ Fix all eslint issues @done(19-04-25 00:04)
   ✔ Update .eslintrc.json @done(19-04-25 00:08)
   ✔ Check to see if dotenv has to be called in every instance it is used @done(19-04-25 00:08)
+  ☐ Serve public files over the /public route instead of just /js or /styles
   ☐ Redirect errors in api route to error handler
+  ☐ Use different redis dbs for production and development
+  ☐ Check the impact of changing resave and saveUnitialized for expressSessions to false
   ☐ Failed to load resource: net::ERR_CONTENT_LENGTH_MISMATCH, videoId=ZiADuDjueJc
+    Weird thing is that it works on firefox and edge but it gives this error the above error on chrome
   ☐ Inform user that they have to manually click play button cause autoplay failed
   ☐ Should all the modules that are used in different files be initialized in config.js? Ex: winston's logger
   ☐ Implement a better playlistid parser

@@ -45,8 +45,8 @@ const youtubeOAuth2 = google.youtube({
 const sess = {
   store: new RedisStore({client: client}),
   secret: config.sessionSecret,
-  resave: true,
-  saveUninitialized: true,
+  resave: false,
+  saveUninitialized: false,
 };
 
 // Session Middleware
