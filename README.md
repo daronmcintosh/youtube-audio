@@ -1,6 +1,8 @@
 # Youtube Audio
 This app is a multi-page audio version of youtube. It supports streaming a single video or playlist, streaming a livestream, searching, viewing channels and linking a youtube account. Each video or livestream is converted and streamed back to the client on the fly without anything ever being saved on the server.
 
+**This version is no longer maintained. See React version [here](https://github.com/iSolutionJA/youtube-audio-react)**
+
 ## Motivation
 I wanted to listen to just audio on youtube on any device without having to watch the video. Also, I wanted to be able to lock my device without having the audio stopped and to save my high speed data from running out.
 
